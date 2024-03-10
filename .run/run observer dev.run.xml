@@ -1,0 +1,12 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="run observer dev" type="GoApplicationRunConfiguration" factoryName="Go Application">
+    <module name="youless-observer" />
+    <working_directory value="$PROJECT_DIR$" />
+    <go_parameters value="-tags=dev" />
+    <kind value="PACKAGE" />
+    <package value="github.com/roeldev/youless-observer/cmd/observer" />
+    <directory value="$PROJECT_DIR$" />
+    <filePath value="$PROJECT_DIR$/cmd/observer/main.go" />
+    <method v="2" />
+  </configuration>
+</component>
