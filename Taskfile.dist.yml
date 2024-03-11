@@ -11,3 +11,13 @@ tasks:
     desc: Run tests via act
     cmds:
       - act -q -j test
+
+  img:build:
+    desc: Build Docker image
+    cmds:
+      - docker buildx build --no-cache --tag roeldev/youless-observer:experimental .
+
+  img:push:
+    desc: Push Docker image
+    cmds:
+      - docker push roeldev/youless-observer:experimental

@@ -8,10 +8,6 @@ ENV CGO_ENABLED=0  \
     GOOS=linux  \
     GOARCH=amd64
 
-RUN set -eux  \
-    && apt-get update  \
-    && apt-get install git
-
 COPY ./ /go/build
 WORKDIR /go/build/
 
