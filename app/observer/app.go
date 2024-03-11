@@ -11,7 +11,7 @@ import (
 	"github.com/go-pogo/buildinfo"
 	"github.com/go-pogo/errors"
 	"github.com/go-pogo/telemetry"
-	"github.com/roeldev/youless-client"
+	youlessclient "github.com/roeldev/youless-client"
 	"github.com/roeldev/youless-logger"
 	"github.com/roeldev/youless-logger/server"
 	"github.com/roeldev/youless-observer"
@@ -31,7 +31,7 @@ type Config struct {
 	Server        server.Config `env:",include"`
 	Telemetry     telemetry.Config
 	Prometheus    server.PrometheusConfig `env:",include"`
-	YouLess       youless.Config          `env:"YOULESS,include"`
+	YouLess       youlessclient.Config    `env:"YOULESS,include"`
 	//Mqtt          mqtt.Config             `env:",include"`
 
 	Observer struct {
@@ -45,7 +45,7 @@ type Config struct {
 // health status, build info and metrics endpoints.
 type App struct {
 	server   *server.Server
-	client   *youless.Client
+	client   *youlessclient.Client
 	observer *youlessobserver.Observer
 }
 
@@ -55,7 +55,7 @@ func New(conf Config, log zerolog.Logger) (*App, error) {
 
 	app.server, err = server.New("observer", conf.Server, log, nil,
 		server.WithBuildInfo(buildinfo.New(youlessobserver.Version).
-			WithExtra("client_version", youless.Version).
+			WithExtra("client_version", youlessclient.Version).
 			WithExtra("logger_version", youlesslogger.Version),
 		),
 		server.WithTelemetryAndPrometheus(conf.Telemetry, conf.Prometheus),
@@ -64,9 +64,9 @@ func New(conf Config, log zerolog.Logger) (*App, error) {
 		return nil, errors.Wrap(err, ErrServerCreateFailure)
 	}
 
-	app.client, err = youless.NewClient(conf.YouLess,
-		youless.WithLogger(youless.NewLogger(log)),
-		youless.WithTracerProvider(app.server.TracerProvider()),
+	app.client, err = youlessclient.NewClient(conf.YouLess,
+		youlessclient.WithLogger(youlessclient.NewLogger(log)),
+		youlessclient.WithTracerProvider(app.server.TracerProvider()),
 	)
 	if err != nil {
 		return nil, errors.Wrap(err, ErrClientCreateFailure)

@@ -7,7 +7,7 @@ package youlessobserver
 import (
 	"context"
 	"github.com/go-pogo/errors"
-	"github.com/roeldev/youless-client"
+	youlessclient "github.com/roeldev/youless-client"
 	"go.opentelemetry.io/otel/attribute"
 	"go.opentelemetry.io/otel/metric"
 )
@@ -17,18 +17,18 @@ const PhaseReadingObserverName = "youless.observer.phase"
 var _ Registerer = (*PhaseReadingRegisterer)(nil)
 
 type PhaseReadingRegisterer struct {
-	client *youless.Client
+	client *youlessclient.Client
 
 	ExcludePower bool
 	SinglePhase  bool
 }
 
-func NewPhaseReadingRegisterer(client *youless.Client) *PhaseReadingRegisterer {
+func NewPhaseReadingRegisterer(client *youlessclient.Client) *PhaseReadingRegisterer {
 	var reg PhaseReadingRegisterer
 	return reg.WithClient(client)
 }
 
-func (reg *PhaseReadingRegisterer) WithClient(client *youless.Client) *PhaseReadingRegisterer {
+func (reg *PhaseReadingRegisterer) WithClient(client *youlessclient.Client) *PhaseReadingRegisterer {
 	reg.client = client
 	return reg
 }

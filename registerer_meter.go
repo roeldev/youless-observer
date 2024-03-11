@@ -7,7 +7,7 @@ package youlessobserver
 import (
 	"context"
 	"github.com/go-pogo/errors"
-	"github.com/roeldev/youless-client"
+	youlessclient "github.com/roeldev/youless-client"
 	"go.opentelemetry.io/otel/attribute"
 	"go.opentelemetry.io/otel/metric"
 )
@@ -17,7 +17,7 @@ const MeterReadingObserverName = "youless.observer.meter"
 var _ Registerer = (*MeterReadingRegisterer)(nil)
 
 type MeterReadingRegisterer struct {
-	client *youless.Client
+	client *youlessclient.Client
 
 	ExcludePower bool
 	ExcludeS0    bool
@@ -25,12 +25,12 @@ type MeterReadingRegisterer struct {
 	ExcludeWater bool
 }
 
-func NewMeterReadingRegisterer(client *youless.Client) *MeterReadingRegisterer {
+func NewMeterReadingRegisterer(client *youlessclient.Client) *MeterReadingRegisterer {
 	var reg MeterReadingRegisterer
 	return reg.WithClient(client)
 }
 
-func (reg *MeterReadingRegisterer) WithClient(client *youless.Client) *MeterReadingRegisterer {
+func (reg *MeterReadingRegisterer) WithClient(client *youlessclient.Client) *MeterReadingRegisterer {
 	reg.client = client
 	return reg
 }

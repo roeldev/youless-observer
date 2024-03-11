@@ -6,7 +6,7 @@ package youlessobserver
 
 import (
 	"github.com/go-pogo/errors"
-	"github.com/roeldev/youless-client"
+	youlessclient "github.com/roeldev/youless-client"
 	"go.opentelemetry.io/otel/metric"
 	"sync/atomic"
 )
@@ -65,7 +65,7 @@ func (o *Observer) Start() error {
 
 	o.log.ObserverStart()
 	o.started.Store(true)
-	opts := metric.WithInstrumentationVersion(youless.Version)
+	opts := metric.WithInstrumentationVersion(youlessclient.Version)
 
 	for name, reg := range o.registerers {
 		r, err := reg.Register(o.prov.Meter(name, opts))

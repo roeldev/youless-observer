@@ -5,7 +5,7 @@
 package youlessobserver
 
 import (
-	"github.com/roeldev/youless-client"
+	youlessclient "github.com/roeldev/youless-client"
 )
 
 type Option func(o *Observer) error
@@ -24,7 +24,7 @@ func WithRegisterer(name string, reg Registerer) Option {
 	}
 }
 
-func WithMeterReading(reg MeterReadingRegisterer, client *youless.Client) Option {
+func WithMeterReading(reg MeterReadingRegisterer, client *youlessclient.Client) Option {
 	return func(o *Observer) error {
 		if client != nil {
 			reg.WithClient(client)
@@ -33,7 +33,7 @@ func WithMeterReading(reg MeterReadingRegisterer, client *youless.Client) Option
 	}
 }
 
-func WithPhaseReading(reg PhaseReadingRegisterer, client *youless.Client) Option {
+func WithPhaseReading(reg PhaseReadingRegisterer, client *youlessclient.Client) Option {
 	return func(o *Observer) error {
 		if client != nil {
 			reg.WithClient(client)
