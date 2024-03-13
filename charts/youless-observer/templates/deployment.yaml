@@ -1,0 +1,234 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{- include "observer.fullname" . }}
+  namespace: {{ .Release.Namespace | quote }}
+  labels:
+    {{- include "observer.labels" . | nindent 4 }}
+
+spec:
+  strategy:
+    type: Recreate
+  replicas: 1
+  selector:
+    matchLabels:
+      {{- include "observer.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        {{- include "observer.selectorLabels" . | nindent 8 }}
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      containers:
+        - name: {{ .Chart.Name }}
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+            - name: http
+              protocol: TCP
+              containerPort: {{ .Values.observer.server.port }}
+          livenessProbe:
+            httpGet:
+              path: /healthy
+              port: http
+          readinessProbe:
+            httpGet:
+              path: /healthy
+              port: http
+          env:
+            - name: LOG_LEVEL
+              value: {{ .Values.observer.debug | ternary "debug" .Values.observer.log.level | quote }}
+            - name: LOG_TIMESTAMP
+              value: {{ .Values.observer.log.timestamp | quote }}
+            - name: SERVER_ACCESS_LOG
+              value: {{ .Values.observer.debug | ternary "true" .Values.observer.log.accessLog | quote }}
+            {{- if .Values.observer.server }}
+            - name: SERVER_PORT
+              value: {{ .Values.observer.server.port | quote }}
+            {{- if .Values.observer.server.tls }}
+            {{- if .Values.observer.server.tls.enabled }}
+            - name: SERVER_TLS_VERIFY_CLIENT
+              value: {{ .Values.observer.server.tls.verifyClient | quote }}
+            - name: SERVER_TLS_INSECURE_SKIP_VERIFY
+              value: {{ .Values.observer.debug | ternary "true" .Values.observer.server.tls.insecureSkipVerify | quote }}
+            {{- if .Values.observer.server.tls.caSecretName }}
+            - name: SERVER_TLS_CA_CERT_FILE
+              value: "/mnt/server-tls-ca/ca.crt"
+            {{- else }}
+            - name: SERVER_TLS_CA_CERT_FILE
+              value: {{ .Values.observer.server.tls.caCertFile | quote }}
+            {{- end }}
+            {{- if .Values.observer.server.tls.secretName }}
+            - name: SERVER_TLS_CERT_FILE
+              value: "/mnt/server-tls/tls.crt"
+            - name: SERVER_TLS_KEY_FILE
+              value: "/mnt/server-tls/tls.key"
+            {{- else }}
+            - name: SERVER_TLS_CERT_FILE
+              value: {{ .Values.observer.server.tls.certFile | quote }}
+            - name: SERVER_TLS_KEY_FILE
+              value: {{ .Values.observer.server.tls.keyFile | quote }}
+            {{- end }}
+            {{- end }}
+            {{- end }}
+            {{- end }}
+            - name: OTEL_METRIC_EXPORT_INTERVAL
+              value: {{ .Values.observer.otel.metric.exportInterval | quote }}
+            - name: OTEL_METRIC_EXPORT_TIMEOUT
+              value: {{ .Values.observer.otel.metric.exportTimeout | quote }}
+            {{- if .Values.observer.otel.traces }}
+            {{- if .Values.observer.otel.traces.enabled }}
+            - name: OTEL_TRACES_ENABLED
+              value: "true"
+            - name: OTEL_TRACES_SAMPLER
+              value: {{ .Values.observer.otel.traces.sampler | quote }}
+            - name: OTEL_TRACES_SAMPLER_ARG
+              value: {{ .Values.observer.otel.traces.samplerArg | quote }}
+            {{- end }}
+            {{- end }}
+            {{- if .Values.observer.otel.exporter }}
+            {{- if .Values.observer.otel.exporter.otlp }}
+            - name: OTEL_EXPORTER_OTLP_ENDPOINT
+              value: {{ .Values.observer.otel.exporter.otlp.endpoint | quote }}
+            - name: OTEL_EXPORTER_OTLP_HEADERS
+              value: {{ .Values.observer.otel.exporter.otlp.headers | quote }}
+            - name: OTEL_EXPORTER_OTLP_PROTOCOL
+              value: {{ .Values.observer.otel.exporter.otlp.protocol | quote }}
+            - name: OTEL_EXPORTER_OTLP_TIMEOUT
+              value: {{ .Values.observer.otel.exporter.otlp.timeout | quote }}
+            - name: OTEL_EXPORTER_OTLP_CERTIFICATE
+              value: {{ .Values.observer.otel.exporter.otlp.certificate | quote }}
+            {{- end }}
+            {{- end }}
+            {{- if .Values.observer.prometheus }}
+            {{- if .Values.observer.prometheus.enabled }}
+            - name: PROMETHEUS_ENABLED
+              value: "true"
+            - name: PROMETHEUS_ENDPOINT
+              value: {{ .Values.observer.prometheus.endpoint | quote }}
+            {{- end }}
+            {{- end }}
+            {{- if .Values.observer.youless.configMapName }}
+            - name: YOULESS_BASE_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ .Values.observer.youless.configMapName | quote }}
+                  key: url
+            - name: YOULESS_NAME
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ .Values.observer.youless.configMapName | quote }}
+                  key: name
+            - name: YOULESS_TIMEOUT
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ .Values.observer.youless.configMapName | quote }}
+                  key: timeout
+                  optional: true
+            {{- else }}
+            - name: YOULESS_BASE_URL
+              value: {{ .Values.observer.youless.baseUrl | quote }}
+            - name: YOULESS_NAME
+              value: {{ .Values.observer.youless.name | quote }}
+            - name: YOULESS_TIMEOUT
+              value: {{ .Values.observer.youless.timeout | quote }}
+            {{- end }}
+
+            {{- if .Values.observer.youless.secretName }}
+            - name: YOULESS_PASSWORD_FILE
+              value: "/mnt/device-password/password"
+            {{- else if .Values.observer.youless.configMapName }}
+            - name: YOULESS_PASSWORD
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ .Values.observer.youless.configMapName | quote }}
+                  key: password
+                  optional: true
+            {{- else if .Values.observer.youless.password }}
+            - name: YOULESS_PASSWORD
+              value: {{ .Values.observer.youless.password | quote }}
+            {{- end }}
+
+            {{- if .Values.observer.mqtt }}
+            {{- if .Values.observer.mqtt.enabled }}
+            - name: MQTT_ENABLED
+              value: "true"
+            - name: MQTT_BROKER_URLS
+              value: {{ .Values.observer.mqtt.brokerUrls | quote }}
+            - name: MQTT_CLIENT_ID
+              value: {{ .Values.observer.mqtt.clientId | quote }}
+            - name: MQTT_TOPIC
+              value: {{ .Values.observer.mqtt.topic | quote }}
+            {{- end }}
+            {{- end }}
+
+            - name: OBSERVER_EXCLUDE_POWER
+              value: {{ .Values.observer.excludePower | quote }}
+            - name: OBSERVER_EXCLUDE_S0
+              value: {{ .Values.observer.excludeS0 | quote }}
+            - name: OBSERVER_EXCLUDE_GAS
+              value: {{ .Values.observer.excludeGas | quote }}
+            - name: OBSERVER_EXCLUDE_WATER
+              value: {{ .Values.observer.excludeWater | quote }}
+            - name: OBSERVER_SINGLE_PHASE
+              value: {{ .Values.observer.singlePhase | quote }}
+
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+
+          volumeMounts:
+            {{- if .Values.observer.server.tls.secretName }}
+            - name: server-tls
+              mountPath: /mnt/server-tls
+              readOnly: true
+            {{- end }}
+            {{- if .Values.observer.server.tls.caSecretName }}
+            - name: server-tls-ca
+              mountPath: /mnt/server-tls-ca
+              readOnly: true
+            {{- end }}
+            {{- if .Values.observer.youless.secretName }}
+            - name: device-password
+              mountPath: /mnt/device-password
+              readOnly: true
+            {{- end }}
+
+      volumes:
+        {{- if .Values.observer.server.tls.secretName }}
+        - name: server-tls
+          secret:
+            secretName: {{ .Values.observer.server.tls.secretName }}
+            defaultMode: 288 # 0400
+        {{- end }}
+        {{- if .Values.observer.server.tls.caSecretName }}
+        - name: server-tls-ca
+          secret:
+            secretName: {{ .Values.observer.server.tls.caSecretName }}
+            defaultMode: 288 # 0400
+        {{- end }}
+        {{- if .Values.observer.youless.secretName }}
+        - name: device-password
+          secret:
+            secretName: {{ .Values.observer.youless.secretName }}
+            defaultMode: 288 # 0400
+        {{- end }}
+
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}

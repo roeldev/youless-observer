@@ -1,0 +1,132 @@
+nameOverride: ""
+fullnameOverride: ""
+
+image:
+  repository: roeldev/youless-observer
+  pullPolicy: IfNotPresent
+  tag: experimental
+
+# Expose the deployment using the service.
+service:
+  enabled: false
+  type: LoadBalancer
+  port: 80
+  annotations: {}
+
+networkPolicy:
+  create: false
+
+podAnnotations: {}
+
+podSecurityContext: {}
+
+securityContext: {}
+# capabilities:
+#   drop:
+#   - ALL
+# readOnlyRootFilesystem: true
+# runAsNonRoot: true
+# runAsUser: 1000
+
+resources:
+   limits:
+     cpu: 50m
+     memory: 32Mi
+   requests:
+     cpu: 50m
+   memory: 32Mi
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}
+
+observer:
+  # When true, overrides and sets:
+  #   log.level: "debug"
+  #   log.accessLog: true
+  #   tls.insecureSkipVerify: true
+  debug: false
+
+  log:
+    # Active log level, must be one of: debug, info, warn, error, fatal, panic, disabled.
+    level: warn # LOG_LEVEL
+    # Add timestamp to log entries when true.
+    timestamp: true # LOG_TIMESTAMP
+    # Enable server access logging when true.
+    accessLog: false # SERVER_ACCESS_LOG
+
+  server:
+    # Port on which the server inside the container listens to.
+    port: 2512 # SERVER_PORT
+    tls:
+      enabled: false
+      # Name of secret containing TLS certificate and key.
+      secretName: ""
+      # Name of secret containing a CA certificate (ca.crt).
+      caSecretName: ""
+      certFile: "" # SERVER_TLS_CERT_FILE
+      keyFile: "" # SERVER_TLS_KEY_FILE
+      caCertFile: "" # SERVER_TLS_CA_CERT_FILE
+      # Enables mTLS when set to true.
+      verifyClient: true # SERVER_TLS_VERIFY_CLIENT
+      insecureSkipVerify: false # SERVER_TLS_INSECURE_SKIP_VERIFY
+
+  otel:
+    resourceAttributes: "" # OTEL_RESOURCE_ATTRIBUTES
+
+    # Collecting metrics via OTEL is always enabled.
+    metric:
+      exportInterval: 10000 # OTEL_METRIC_EXPORT_INTERVAL
+      exportTimeout: 10000 # OTEL_METRIC_EXPORT_TIMEOUT
+
+    # Collecting traces via OTEL may be disabled.
+    traces:
+      enabled: true # OTEL_TRACES_ENABLED
+      sampler: parentbased_traceidratio # OTEL_TRACES_SAMPLER
+      samplerArg: 0.5 # OTEL_TRACES_SAMPLER_ARG
+
+    exporter:
+      otlp:
+        endpoint: "" # OTEL_EXPORTER_OTLP_ENDPOINT
+        headers: "" # OTEL_EXPORTER_OTLP_HEADERS
+        protocol: grpc # OTEL_EXPORTER_OTLP_PROTOCOL
+        timeout: 5000 # OTEL_EXPORTER_OTLP_TIMEOUT
+        certificate: "" # OTEL_EXPORTER_OTLP_CERTIFICATE
+
+  # metrics
+  prometheus:
+    enabled: false # PROMETHEUS_ENABLED
+    endpoint: /metrics # PROMETHEUS_ENDPOINT
+
+  youless:
+    # When a configMapName is provided, the config map is used to populate the
+    # YOULESS_BASE_URL, YOULESS_NAME, YOULESS_TIMEOUT and YOULESS_PASSWORD env
+    # variables. The config map must have the url and name keys. The timeout
+    # and password keys are optional.
+    configMapName: ""
+    # When a secretName is provided, the secret is mounted and used as the
+    # value for YOULESS_PASSWORD_FILE.
+    secretName: ""
+    # Url of the YouLess device to connect to.
+    url: http://youless # YOULESS_BASE_URL
+    # Name of the YouLess device for identification.
+    name: YouLess # YOULESS_NAME
+    # Connection timeout for the YouLess device.
+    timeout: 5s # YOULESS_TIMEOUT
+    # Password used to connect with the YouLess device.
+    password: "" # YOULESS_PASSWORD
+
+  # MQTT is not yet available.
+  mqtt:
+    enabled: false # MQTT_ENABLED
+    brokerUrls: "" # MQTT_BROKER_URLS
+    clientId: "" # MQTT_CLIENT_ID
+    topic: youless # MQTT_TOPIC
+
+  excludePower: false # OBSERVER_EXCLUDE_POWER
+  excludeS0: false # OBSERVER_EXCLUDE_S0
+  excludeGas: false # OBSERVER_EXCLUDE_GAS
+  excludeWater: false # OBSERVER_EXCLUDE_WATER
+  singlePhase: true # OBSERVER_SINGLE_PHASE
