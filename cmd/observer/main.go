@@ -22,6 +22,9 @@ func main() {
 	var conf observerapp.Config
 	errors.FatalOnErr(unmarshalEnv(&conf))
 
+	// collecting metrics is always enabled
+	conf.Telemetry.Meter.Enabled = true
+
 	log := zerolog.New(loggerOut()).Level(conf.Level)
 	if conf.WithTimestamp {
 		log = log.With().Timestamp().Logger()
