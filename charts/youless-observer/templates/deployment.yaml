@@ -1,7 +1,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{- include "observer.fullname" . }}
+  name: {{ include "observer.fullname" . | quote }}
   namespace: {{ .Release.Namespace | quote }}
   labels:
     {{- include "observer.labels" . | nindent 4 }}
@@ -13,12 +13,13 @@ spec:
   selector:
     matchLabels:
       {{- include "observer.selectorLabels" . | nindent 6 }}
+
   template:
     metadata:
       labels:
-        {{- include "observer.selectorLabels" . | nindent 8 }}
+        {{- include "observer.labels" . | nindent 8 }}
     spec:
-      {{- with .Values.imagePullSecrets }}
+      {{- with .Values.image.pullSecrets }}
       imagePullSecrets:
         {{- toYaml . | nindent 8 }}
       {{- end }}
@@ -61,7 +62,7 @@ spec:
             {{- if .Values.observer.server.tls.caSecretName }}
             - name: SERVER_TLS_CA_CERT_FILE
               value: "/mnt/server-tls-ca/ca.crt"
-            {{- else }}
+            {{- else if .Values.observer.server.tls.caSecretName }}
             - name: SERVER_TLS_CA_CERT_FILE
               value: {{ .Values.observer.server.tls.caCertFile | quote }}
             {{- end }}
@@ -95,16 +96,40 @@ spec:
             {{- end }}
             {{- if .Values.observer.otel.exporter }}
             {{- if .Values.observer.otel.exporter.otlp }}
+            {{- if .Values.observer.otel.exporter.otlp.enabled }}
             - name: OTEL_EXPORTER_OTLP_ENDPOINT
               value: {{ .Values.observer.otel.exporter.otlp.endpoint | quote }}
+            {{- if .Values.observer.otel.exporter.otlp.headers }}
             - name: OTEL_EXPORTER_OTLP_HEADERS
               value: {{ .Values.observer.otel.exporter.otlp.headers | quote }}
+            {{- end }}
             - name: OTEL_EXPORTER_OTLP_PROTOCOL
               value: {{ .Values.observer.otel.exporter.otlp.protocol | quote }}
             - name: OTEL_EXPORTER_OTLP_TIMEOUT
               value: {{ .Values.observer.otel.exporter.otlp.timeout | quote }}
+            {{- if .Values.observer.otel.exporter.otlp.tls }}
+            {{- if .Values.observer.otel.exporter.otlp.tls.enabled }}
+            {{- if .Values.observer.otel.exporter.otlp.tls.caSecretName }}
             - name: OTEL_EXPORTER_OTLP_CERTIFICATE
-              value: {{ .Values.observer.otel.exporter.otlp.certificate | quote }}
+              value: "/mnt/otlp-tls-ca/ca.crt"
+            {{- else if .Values.observer.otel.exporter.otlp.tls.caCertFile }}
+            - name: OTEL_EXPORTER_OTLP_CERTIFICATE
+              value: {{ .Values.observer.otel.exporter.otlp.tls.caCertFile | quote }}
+            {{- end }}
+            {{- if .Values.observer.otel.exporter.otlp.tls.secretName }}
+            - name: OTEL_EXPORTER_OTLP_CLIENT_CERTIFICATE
+              value: "/mnt/otlp-client-tls/tls.crt"
+            - name: OTEL_EXPORTER_OTLP_CLIENT_KEY
+              value: "/mnt/otlp-client-tls/tls.key"
+            {{- else }}
+            - name: OTEL_EXPORTER_OTLP_CLIENT_CERTIFICATE
+              value: {{ .Values.observer.otel.exporter.otlp.tls.certFile | quote }}
+            - name: OTEL_EXPORTER_OTLP_CLIENT_KEY
+              value: {{ .Values.observer.otel.exporter.otlp.tls.keyFile | quote }}
+            {{- end }}
+            {{- end }}
+            {{- end }}
+            {{- end }}
             {{- end }}
             {{- end }}
             {{- if .Values.observer.prometheus }}
@@ -134,16 +159,15 @@ spec:
                   optional: true
             {{- else }}
             - name: YOULESS_BASE_URL
-              value: {{ .Values.observer.youless.baseUrl | quote }}
+              value: {{ .Values.observer.youless.url | quote }}
             - name: YOULESS_NAME
               value: {{ .Values.observer.youless.name | quote }}
             - name: YOULESS_TIMEOUT
               value: {{ .Values.observer.youless.timeout | quote }}
             {{- end }}
-
             {{- if .Values.observer.youless.secretName }}
             - name: YOULESS_PASSWORD_FILE
-              value: "/mnt/device-password/password"
+              value: "/mnt/youless-password/password"
             {{- else if .Values.observer.youless.configMapName }}
             - name: YOULESS_PASSWORD
               valueFrom:
@@ -155,7 +179,6 @@ spec:
             - name: YOULESS_PASSWORD
               value: {{ .Values.observer.youless.password | quote }}
             {{- end }}
-
             {{- if .Values.observer.mqtt }}
             {{- if .Values.observer.mqtt.enabled }}
             - name: MQTT_ENABLED
@@ -168,7 +191,6 @@ spec:
               value: {{ .Values.observer.mqtt.topic | quote }}
             {{- end }}
             {{- end }}
-
             - name: OBSERVER_EXCLUDE_POWER
               value: {{ .Values.observer.excludePower | quote }}
             - name: OBSERVER_EXCLUDE_S0
@@ -184,6 +206,9 @@ spec:
             {{- toYaml .Values.resources | nindent 12 }}
 
           volumeMounts:
+            {{- if .Values.observer.server }}
+            {{- if .Values.observer.server.tls }}
+            {{- if .Values.observer.server.tls.enabled }}
             {{- if .Values.observer.server.tls.secretName }}
             - name: server-tls
               mountPath: /mnt/server-tls
@@ -194,13 +219,35 @@ spec:
               mountPath: /mnt/server-tls-ca
               readOnly: true
             {{- end }}
+            {{- end }}
+            {{- end }}
+            {{- end }}
+            {{- if .Values.observer.otel.exporter.otlp }}
+            {{- if .Values.observer.otel.exporter.otlp.tls }}
+            {{- if .Values.observer.otel.exporter.otlp.tls.enabled }}
+            {{- if .Values.observer.otel.exporter.otlp.tls.secretName }}
+            - name: otlp-client-tls
+              mountPath: /mnt/otlp-client-tls
+              readOnly: true
+            {{- end }}
+            {{- if .Values.observer.otel.exporter.otlp.tls.caSecretName }}
+            - name: otlp-tls-ca
+              mountPath: /mnt/otlp-tls-ca
+              readOnly: true
+            {{- end }}
+            {{- end }}
+            {{- end }}
+            {{- end }}
             {{- if .Values.observer.youless.secretName }}
-            - name: device-password
-              mountPath: /mnt/device-password
+            - name: youless-password
+              mountPath: /mnt/youless-password
               readOnly: true
             {{- end }}
 
       volumes:
+        {{- if .Values.observer.server }}
+        {{- if .Values.observer.server.tls }}
+        {{- if .Values.observer.server.tls.enabled }}
         {{- if .Values.observer.server.tls.secretName }}
         - name: server-tls
           secret:
@@ -213,8 +260,27 @@ spec:
             secretName: {{ .Values.observer.server.tls.caSecretName }}
             defaultMode: 288 # 0400
         {{- end }}
+        {{- end }}
+        {{- end }}
+        {{- end }}
+        {{- if .Values.observer.otel.exporter.otlp.tls }}
+        {{- if .Values.observer.otel.exporter.otlp.tls.enabled }}
+        {{- if .Values.observer.otel.exporter.otlp.tls.secretName }}
+        - name: otlp-client-tls
+          secret:
+            secretName: {{ .Values.observer.otel.exporter.otlp.tls.secretName }}
+            defaultMode: 288 # 0400
+        {{- end }}
+        {{- if .Values.observer.otel.exporter.otlp.tls.caSecretName }}
+        - name: otlp-tls-ca
+          secret:
+            secretName: {{ .Values.observer.otel.exporter.otlp.tls.caSecretName }}
+            defaultMode: 288 # 0400
+        {{- end }}
+        {{- end }}
+        {{- end }}
         {{- if .Values.observer.youless.secretName }}
-        - name: device-password
+        - name: youless-password
           secret:
             secretName: {{ .Values.observer.youless.secretName }}
             defaultMode: 288 # 0400

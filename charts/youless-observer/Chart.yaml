@@ -2,7 +2,7 @@ apiVersion: v2
 name: youless-observer
 version: 0.0.1
 appVersion: 0.0.1
-description: Real-time usage observer service for YouLess energy monitor
+description: Real-time usage observer service for YouLess energy meter
 type: application
 keywords: [youless, energy, monitor, observer, otel, mqtt]
 home: https://roeldev.github.io/youless-observer
@@ -10,6 +10,3 @@ sources:
   - https://github.com/roeldev/youless-observer
 maintainers:
   - name: roeldev
-
-annotations:
-  artifacthub.io/category: monitoring-logging

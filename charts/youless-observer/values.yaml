@@ -3,18 +3,19 @@ fullnameOverride: ""
 
 image:
   repository: roeldev/youless-observer
-  pullPolicy: IfNotPresent
   tag: experimental
+  pullPolicy: IfNotPresent
+  pullSecrets: []
 
 # Expose the deployment using the service.
 service:
-  enabled: false
+  enabled: true
   type: LoadBalancer
   port: 80
   annotations: {}
 
 networkPolicy:
-  create: false
+  create: true
 
 podAnnotations: {}
 
@@ -61,13 +62,16 @@ observer:
     # Port on which the server inside the container listens to.
     port: 2512 # SERVER_PORT
     tls:
-      enabled: false
+      enabled: true
       # Name of secret containing TLS certificate and key.
       secretName: ""
       # Name of secret containing a CA certificate (ca.crt).
       caSecretName: ""
+      # Path to the TLS certificate file. Is ignored when secretName is set.
       certFile: "" # SERVER_TLS_CERT_FILE
+      # Path to the TLS key file. Is ignored when secretName is set.
       keyFile: "" # SERVER_TLS_KEY_FILE
+      # Path to the CA certificate file. Is ignored when caSecretName is set.
       caCertFile: "" # SERVER_TLS_CA_CERT_FILE
       # Enables mTLS when set to true.
       verifyClient: true # SERVER_TLS_VERIFY_CLIENT
@@ -89,11 +93,24 @@ observer:
 
     exporter:
       otlp:
+        enabled: true
         endpoint: "" # OTEL_EXPORTER_OTLP_ENDPOINT
         headers: "" # OTEL_EXPORTER_OTLP_HEADERS
         protocol: grpc # OTEL_EXPORTER_OTLP_PROTOCOL
         timeout: 5000 # OTEL_EXPORTER_OTLP_TIMEOUT
-        certificate: "" # OTEL_EXPORTER_OTLP_CERTIFICATE
+        tls:
+          enabled: false
+          # Name of secret containing TLS certificate and key.
+          secretName: ""
+          # Name of secret containing a CA certificate (ca.crt).
+          caSecretName: ""
+          # Path to the TLS certificate file. Is ignored when secretName is set.
+          certFile: "" # OTEL_EXPORTER_OTLP_CLIENT_CERTIFICATE
+          # Path to the TLS key file. Is ignored when secretName is set.
+          keyFile: "" # OTEL_EXPORTER_OTLP_CLIENT_KEY
+          # Path to the CA certificate file. Is ignored when caSecretName is set.
+          caCertFile: "" # OTEL_EXPORTER_OTLP_CERTIFICATE
+          insecureSkipVerify: false # OTEL_EXPORTER_OTLP_INSECURE
 
   # metrics
   prometheus:
