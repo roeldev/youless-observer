@@ -3,7 +3,6 @@ module github.com/roeldev/youless-observer
 go 1.21
 
 require (
-	github.com/eclipse/paho.golang v0.20.0
 	github.com/go-pogo/buildinfo v0.6.0
 	github.com/go-pogo/env v0.4.1
 	github.com/go-pogo/errors v0.9.0
@@ -28,7 +27,6 @@ require (
 	github.com/go-pogo/writing v0.1.1 // indirect
 	github.com/goccy/go-json v0.10.2 // indirect
 	github.com/golang/protobuf v1.5.4 // indirect
-	github.com/gorilla/websocket v1.5.0 // indirect
 	github.com/grpc-ecosystem/grpc-gateway/v2 v2.19.0 // indirect
 	github.com/mattn/go-colorable v0.1.13 // indirect
 	github.com/mattn/go-isatty v0.0.20 // indirect
