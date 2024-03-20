@@ -1,4 +1,4 @@
-name: Lint
+name: lint-go
 on:
   push:
     branches: [main]
@@ -8,7 +8,6 @@ on:
 jobs:
   lint:
     runs-on: ubuntu-latest
-
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-go@v5
@@ -22,7 +21,6 @@ jobs:
 
   verify:
     runs-on: ubuntu-latest
-
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-go@v5
