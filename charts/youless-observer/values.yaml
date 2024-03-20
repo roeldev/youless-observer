@@ -78,6 +78,7 @@ observer:
       insecureSkipVerify: false # SERVER_TLS_INSECURE_SKIP_VERIFY
 
   otel:
+    serviceName: "" # OTEL_SERVICE_NAME
     resourceAttributes: "" # OTEL_RESOURCE_ATTRIBUTES
 
     # Collecting metrics via OTEL is always enabled.

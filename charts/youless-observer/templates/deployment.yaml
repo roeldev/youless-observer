@@ -80,6 +80,17 @@ spec:
             {{- end }}
             {{- end }}
             {{- end }}
+            {{- if .Values.observer.otel.serviceName }}
+            - name: OTEL_SERVICE_NAME
+              value: {{ .Values.observer.otel.serviceName | quote }}
+            {{- else }}
+            - name: OTEL_SERVICE_NAME
+              value: {{ include "observer.fullname" . | quote }}
+            {{- end }}
+            {{- if .Values.observer.otel.resourceAttributes }}
+            - name: OTEL_RESOURCE_ATTRIBUTES
+              value: {{ .Values.observer.otel.resourceAttributes | quote }}
+            {{- end }}
             - name: OTEL_METRIC_EXPORT_INTERVAL
               value: {{ .Values.observer.otel.metric.exportInterval | quote }}
             - name: OTEL_METRIC_EXPORT_TIMEOUT
