@@ -61,10 +61,10 @@ github.com/prometheus/common v0.48.0 h1:QO8U2CdOzSn1BBsmXJXduaaW+dY/5QLjfB8svtSz
 github.com/prometheus/common v0.48.0/go.mod h1:0/KsvlIEfPQCQ5I2iNSAWKPZziNCvRs5EC6ILDTlAPc=
 github.com/prometheus/procfs v0.12.0 h1:jluTpSng7V9hY0O2R9DzzJHYb2xULk9VTR1V1R/k6Bo=
 github.com/prometheus/procfs v0.12.0/go.mod h1:pcuDEFsWDnvcgNzo4EEweacyhjeA9Zk3cnaOZAZEfOo=
-github.com/roeldev/youless-client v0.0.0-20240310163852-ec156ac81af2 h1:vdi2ZPk1H9SkdBzytMa9DnWxP1Zvwg3rxNOovPOtPJ0=
-github.com/roeldev/youless-client v0.0.0-20240310163852-ec156ac81af2/go.mod h1:zzfqNqxCeEue1d9zVDnHqtikA91hQ8Q8tMqenG08e44=
-github.com/roeldev/youless-logger v0.0.0-20240311203149-37d4f52447b7 h1:mS9WvgA5GyYpAA/YFdS7OxLbwdp5rr2HzxQSvi9ljBQ=
-github.com/roeldev/youless-logger v0.0.0-20240311203149-37d4f52447b7/go.mod h1:BktevobVKaQDYCX5SKwZdLVnWADmpECbS2shEElfxj8=
+github.com/roeldev/youless-client v0.0.0-20240322181204-c0107c42836d h1:VpqS2La9wdXvIR/qFbk6q5O1HuosHomjHQEyeyEq8Zk=
+github.com/roeldev/youless-client v0.0.0-20240322181204-c0107c42836d/go.mod h1:zzfqNqxCeEue1d9zVDnHqtikA91hQ8Q8tMqenG08e44=
+github.com/roeldev/youless-logger v0.0.0-20240322182326-d1086db6957d h1:QtnrY+5x1tLDpfH04YWTibgnNeIgcoqVG2/eP+WiZMk=
+github.com/roeldev/youless-logger v0.0.0-20240322182326-d1086db6957d/go.mod h1:7nl9QHEbpEuMYOzGNlvxMU3hZsxBN/KpTBNsoC00grU=
 github.com/rs/xid v1.5.0/go.mod h1:trrq9SKmegXys3aeAKXMUTdJsYXVwGY3RLcfgqegfbg=
 github.com/rs/zerolog v1.32.0 h1:keLypqrlIjaFsbmJOBdB/qvyF8KEtCWHwobLp5l/mQ0=
 github.com/rs/zerolog v1.32.0/go.mod h1:/7mN4D5sKwJLZQ2b/znpjC3/GQWY/xaDXUM0kKWRHss=

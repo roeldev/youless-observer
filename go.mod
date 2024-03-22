@@ -8,8 +8,8 @@ require (
 	github.com/go-pogo/env v0.4.1
 	github.com/go-pogo/errors v0.9.0
 	github.com/go-pogo/telemetry v0.0.0-20240319183413-6f2e6362d12e
-	github.com/roeldev/youless-client v0.0.0-20240310163852-ec156ac81af2
-	github.com/roeldev/youless-logger v0.0.0-20240311203149-37d4f52447b7
+	github.com/roeldev/youless-client v0.0.0-20240322181204-c0107c42836d
+	github.com/roeldev/youless-logger v0.0.0-20240322182326-d1086db6957d
 	github.com/rs/zerolog v1.32.0
 	go.opentelemetry.io/otel v1.24.0
 	go.opentelemetry.io/otel/metric v1.24.0
