@@ -2,6 +2,13 @@ name: test-go
 on:
   push:
     branches: [main]
+    paths-ignore:
+      - '.run/**'
+      - 'charts/**'
+      - '.*'
+      - 'Dockerfile'
+      - 'README.md'
+      - 'Taskfile.*'
   pull_request:
     branches: [main]
 
