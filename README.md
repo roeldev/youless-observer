@@ -46,7 +46,7 @@ Key features are:
 
 ### Helm
 
-A [Helm chart](https://roeldev.github.io/youless-observer) is available to deploy the service inside a Kubernetes
+A [Helm chart](charts/youless-observer/README.md) is available to deploy the service inside a Kubernetes
 cluster.
 
 ## Documentation
