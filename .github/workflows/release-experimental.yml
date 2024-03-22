@@ -17,6 +17,4 @@ jobs:
           password: "${{ secrets.DOCKER_PASSWORD }}"
 
       - name: Build and push Docker image
-        run: |
-          task experimental:build
-          docker push roeldev/youless-observer
+        run: task experimental
