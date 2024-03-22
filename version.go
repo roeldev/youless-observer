@@ -5,4 +5,4 @@
 package youlessobserver
 
 // Version of the package and its app.
-const Version = "0.0.1"
+const Version = "0.1.0-rc1"
