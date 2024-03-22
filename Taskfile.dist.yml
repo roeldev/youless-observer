@@ -5,19 +5,28 @@ tasks:
   ci:lint:
     desc: Run linter via act
     cmds:
-      - act -q -j lint
+      - act -q -j lint-go
 
   ci:test:
     desc: Run tests via act
     cmds:
       - act -q -j test
 
-  img:build:
+  experimental:build:
     desc: Build Docker image
     cmds:
       - docker buildx build --no-cache --tag roeldev/youless-observer:experimental .
 
-  img:push:
-    desc: Push Docker image
+  chart:lint:
+    desc: Lint Helm chart
     cmds:
-      - docker push roeldev/youless-observer:experimental
+      - helm lint ./charts/youless-observer
+
+  chart:debug:
+    desc: Debug Helm chart
+    cmds:
+      - helm template --debug ./charts/youless-observer
+
+  chart:pack:
+    cmds:
+      - helm package charts/youless-observer -d ./dist
