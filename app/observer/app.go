@@ -10,7 +10,6 @@ import (
 	"context"
 	"github.com/go-pogo/buildinfo"
 	"github.com/go-pogo/errors"
-	"github.com/go-pogo/telemetry"
 	youlessclient "github.com/roeldev/youless-client"
 	"github.com/roeldev/youless-logger"
 	"github.com/roeldev/youless-logger/server"
@@ -24,22 +23,6 @@ const (
 	ErrObserverCreateFailure errors.Msg = "failed to create observer"
 )
 
-// Config is the configuration for App.
-type Config struct {
-	Level         zerolog.Level `env:"LOG_LEVEL" default:"debug"`
-	WithTimestamp bool          `env:"LOG_TIMESTAMP" default:"true"`
-	Server        server.Config `env:",include"`
-	Telemetry     telemetry.Config
-	Prometheus    server.PrometheusConfig `env:",include"`
-	YouLess       youlessclient.Config    `env:"YOULESS,include"`
-	//Mqtt          mqtt.Config             `env:",include"`
-
-	Observer struct {
-		youlessobserver.MeterReadingRegisterer
-		youlessobserver.PhaseReadingRegisterer
-	} `env:",include"`
-}
-
 // App is the youless-observer application which runs an Observer that observes
 // the YouLess device using a youless.Client. It also runs a server to expose
 // health status, build info and metrics endpoints.
@@ -50,9 +33,12 @@ type App struct {
 }
 
 func New(conf Config, log zerolog.Logger) (*App, error) {
-	var app App
 	var err error
+	if err = conf.Validate(); err != nil {
+		return nil, err
+	}
 
+	var app App
 	app.server, err = server.New("observer", conf.Server, log, nil,
 		server.WithBuildInfo(buildinfo.New(youlessobserver.Version).
 			WithExtra("client_version", youlessclient.Version).
