@@ -1,6 +1,8 @@
 name: release-charts
 on:
   release:
+    branches:
+      - main
 
 jobs:
   release-charts:
