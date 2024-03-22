@@ -2,6 +2,12 @@ name: release-experimental
 on:
   push:
     branches: [main]
+    paths-ignore:
+      - '.run/**'
+      - 'charts/**'
+      - '.*'
+      - 'README.md'
+      - 'Taskfile.*'
 
 jobs:
   release-experimental:
