@@ -34,20 +34,16 @@ Key features are:
 
 - export metrics via OTLP
 - scrape metrics via Prometheus
-- send metrics via MQTT
-- stream metrics via gRPC
+- send metrics via MQTT (work in progress)
+- stream metrics via gRPC (work in progress)
 
 > Need to store the metrics data for a longer period of time? Have a look
 > at [youless-logger](https://github.com/roeldev/youless-logger).
 
 ## Installation
 
-### Docker
-
-### Helm
-
-A [Helm chart](charts/youless-observer/README.md) is available to deploy the service inside a Kubernetes
-cluster.
+The recommended way to run `youless-observer` is by using the available [Docker image](https://hub.docker.com/repository/docker/roeldev/youless-observer).
+A [Helm chart](charts/youless-observer/README.md) is also available to easily deploy the service inside a Kubernetes cluster.
 
 ## Documentation
 
