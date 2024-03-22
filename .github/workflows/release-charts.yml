@@ -34,6 +34,7 @@ jobs:
       - name: Update index.yaml
         run: |
           git checkout gh-pages
+          git status
           helm repo index --url https://roeldev.github.io/youless-observer --merge index.yaml ./dist
           git config user.name "$GITHUB_ACTOR"
           git config user.email "$GITHUB_ACTOR@users.noreply.github.com"
