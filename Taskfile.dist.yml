@@ -35,4 +35,4 @@ tasks:
 
   chart:pack:
     cmds:
-      - helm package charts/youless-observer -d ./dist
+      - helm package charts/youless-observer
