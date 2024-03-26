@@ -1,7 +1,7 @@
 name: release-charts
 on:
   release:
-    types: [created]
+    types: [ created ]
     branches:
       - main
 
@@ -24,15 +24,16 @@ jobs:
 
       - name: Create chart package
         shell: bash
-        run: task chart:pack
+        run: |
+          task chart:pack
+          mv youless-observer${{ github.ref_name }}.tgz charts.tgz
 
       # https://github.com/marketplace/actions/upload-files-to-a-github-release
       - name: Upload to release
         id: upload-to-release
         uses: svenstaro/upload-release-action@2.9.0
         with:
-          file: youless-observer*.tgz
-          file_glob: true
+          file: charts.tgz
           overwrite: true
           draft: true
 
