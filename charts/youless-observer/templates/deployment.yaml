@@ -39,10 +39,12 @@ spec:
             httpGet:
               path: /healthy
               port: http
+              scheme: {{ .Values.observer.server.tls.enabled | ternary "HTTPS" "HTTP" | quote }}
           readinessProbe:
             httpGet:
               path: /healthy
               port: http
+              scheme: {{ .Values.observer.server.tls.enabled | ternary "HTTPS" "HTTP" | quote }}
           env:
             - name: LOG_LEVEL
               value: {{ .Values.observer.debug | ternary "debug" .Values.observer.log.level | quote }}

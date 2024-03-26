@@ -17,32 +17,6 @@ service:
 networkPolicy:
   create: true
 
-podAnnotations: {}
-
-podSecurityContext: {}
-
-securityContext: {}
-# capabilities:
-#   drop:
-#   - ALL
-# readOnlyRootFilesystem: true
-# runAsNonRoot: true
-# runAsUser: 1000
-
-resources:
-   limits:
-     cpu: 50m
-     memory: 32Mi
-   requests:
-     cpu: 50m
-   memory: 32Mi
-
-nodeSelector: {}
-
-tolerations: []
-
-affinity: {}
-
 observer:
   # When true, overrides and sets:
   #   log.level: "debug"
@@ -54,7 +28,7 @@ observer:
     # Active log level, must be one of: debug, info, warn, error, fatal, panic, disabled.
     level: warn # LOG_LEVEL
     # Add timestamp to log entries when true.
-    timestamp: true # LOG_TIMESTAMP
+    timestamp: false # LOG_TIMESTAMP
     # Enable server access logging when true.
     accessLog: false # SERVER_ACCESS_LOG
 
@@ -62,7 +36,7 @@ observer:
     # Port on which the server inside the container listens to.
     port: 2512 # SERVER_PORT
     tls:
-      enabled: true
+      enabled: false
       # Name of secret containing TLS certificate and key.
       secretName: ""
       # Name of secret containing a CA certificate (ca.crt).
@@ -148,3 +122,29 @@ observer:
   excludeGas: false # OBSERVER_EXCLUDE_GAS
   excludeWater: false # OBSERVER_EXCLUDE_WATER
   singlePhase: true # OBSERVER_SINGLE_PHASE
+
+podAnnotations: {}
+
+podSecurityContext: {}
+
+securityContext: {}
+# capabilities:
+#   drop:
+#   - ALL
+# readOnlyRootFilesystem: true
+# runAsNonRoot: true
+# runAsUser: 1000
+
+resources:
+  limits:
+    cpu: 50m
+    memory: 32Mi
+  requests:
+    cpu: 50m
+  memory: 32Mi
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}
