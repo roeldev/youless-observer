@@ -3,7 +3,7 @@ fullnameOverride: ""
 
 image:
   repository: roeldev/youless-observer
-  tag: 0.1.0-rc1
+  tag: 0.1.0-rc2
   pullPolicy: IfNotPresent
   pullSecrets: []
 
