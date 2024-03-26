@@ -31,7 +31,7 @@ tasks:
   chart:debug:
     desc: Debug Helm chart
     cmds:
-      - helm template --debug ./charts/youless-observer
+      - helm template --debug --release-name youless-observer ./charts/youless-observer
 
   chart:pack:
     cmds:
