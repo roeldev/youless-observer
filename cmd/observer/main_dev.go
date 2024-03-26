@@ -10,6 +10,7 @@ import (
 	"fmt"
 	"github.com/go-pogo/env"
 	"github.com/go-pogo/env/dotenv"
+	observerapp "github.com/roeldev/youless-observer/app/observer"
 	"github.com/rs/zerolog"
 	"io"
 	"os"
@@ -23,11 +24,12 @@ func init() {
 		return fmt.Sprintf("%+v", err)
 	}
 
-	unmarshalEnv = func(v any) error {
-		_, f, _, _ := runtime.Caller(1)
+	unmarshalEnv = func(conf *observerapp.Config) error {
+		_, dir, _, _ := runtime.Caller(1)
+		dir = filepath.Dir(dir)
 
 		ae, _ := dotenv.GetActiveEnvironmentOr(os.Args[1:], dotenv.Development)
-		environ, err := dotenv.Read(filepath.Dir(f), ae).Environ()
+		environ, err := dotenv.Read(dir, ae).Environ()
 		if err != nil {
 			return err
 		}
@@ -35,7 +37,14 @@ func init() {
 		if err = env.Load(environ); err != nil {
 			return err
 		}
-		return env.NewDecoder(environ).Decode(v)
+		if err = env.NewDecoder(environ).Decode(conf); err != nil {
+			return err
+		}
+
+		prefixDir(dir, &conf.Server.TLS.CaCertFile)
+		prefixDir(dir, &conf.Server.TLS.CertFile)
+		prefixDir(dir, &conf.Server.TLS.KeyFile)
+		return nil
 	}
 
 	loggerOut = func() io.Writer {
@@ -43,4 +52,11 @@ func init() {
 		out.TimeFormat = time.StampMilli
 		return out
 	}
+}
+
+func prefixDir(dir string, ptr *string) {
+	if ptr == nil || *ptr == "" || filepath.IsAbs(*ptr) {
+		return
+	}
+	*ptr = filepath.Join(dir, *ptr)
 }

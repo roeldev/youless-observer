@@ -2,6 +2,8 @@
 // Use of this source code is governed by a BSD-style
 // license that can be found in the LICENSE file.
 
+//go:generate go run gen-dotenv.go
+
 package main
 
 import (
@@ -15,20 +17,20 @@ import (
 	"syscall"
 )
 
-var unmarshalEnv func(v any) error
+var unmarshalEnv func(conf *observerapp.Config) error
 var loggerOut func() io.Writer
 
 func main() {
 	var conf observerapp.Config
 	errors.FatalOnErr(unmarshalEnv(&conf))
 
-	// collecting metrics is always enabled
-	conf.Telemetry.Meter.Enabled = true
-
 	log := zerolog.New(loggerOut()).Level(conf.Level)
 	if conf.WithTimestamp {
 		log = log.With().Timestamp().Logger()
 	}
+
+	// collecting metrics is always enabled
+	conf.Telemetry.Meter.Enabled = true
 
 	app, err := observerapp.New(conf, log)
 	if err != nil {

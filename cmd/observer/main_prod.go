@@ -10,19 +10,20 @@ import (
 	"github.com/go-pogo/env"
 	"github.com/go-pogo/env/envfile"
 	"github.com/go-pogo/errors"
+	observerapp "github.com/roeldev/youless-observer/app/observer"
 	"io"
 	"os"
 )
 
 func init() {
-	unmarshalEnv = func(v any) (err error) {
+	unmarshalEnv = func(conf *observerapp.Config) (err error) {
 		src := []env.Lookupper{env.System()}
 		if f, fileErr := envfile.Open("/.env"); fileErr == nil {
 			defer errors.AppendFunc(&err, f.Close)
 			src = append(src, f)
 		}
 
-		err = env.NewDecoder(src...).Decode(v)
+		err = env.NewDecoder(src...).Decode(conf)
 		return
 	}
 

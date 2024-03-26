@@ -12,6 +12,7 @@ import (
 	"github.com/rs/zerolog"
 )
 
+//goland:noinspection GoUnusedConst
 const ConfigValidationError = youlessclient.ConfigValidationError
 
 // Config is the configuration for App.
