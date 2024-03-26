@@ -26,7 +26,7 @@ jobs:
         shell: bash
         run: |
           task chart:pack
-          mv youless-observer${{ github.ref_name }}.tgz charts.tgz
+          mv youless-observer-${{ github.ref_name }}.tgz charts.tgz
 
       # https://github.com/marketplace/actions/upload-files-to-a-github-release
       - name: Upload to release
