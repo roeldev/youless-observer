@@ -14,10 +14,7 @@ spec:
       {{- include "observer.selectorLabels" . | nindent 6 }}
   ingress:
     - ports:
-        - port: 2512
-      from:
-        - podSelector:
-            matchLabels:
-              {{- include "observer.selectorLabels" . | nindent 14 }}
+      - port: 2512
+        protocol: TCP
 {{- end }}
 {{- end }}
