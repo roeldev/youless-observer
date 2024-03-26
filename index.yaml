@@ -3,9 +3,9 @@ entries:
   youless-observer:
   - apiVersion: v2
     appVersion: 0.1.0-rc2
-    created: "2024-03-26T18:06:11.162274845Z"
+    created: "2024-03-26T18:17:29.39582007Z"
     description: Real-time usage observer service for YouLess energy meter
-    digest: 6832f2623310981b274e788e0d395d6501e7fa85dd0276be186e875c9e05a307
+    digest: cd508a10d524531ccd3622eb946f527209176e733d04b228f211adc4a4970995
     home: https://roeldev.github.io/youless-observer
     keywords:
     - youless
@@ -45,4 +45,4 @@ entries:
     urls:
     - https://github.com/roeldev/youless-observer/releases/download/v0.1.0-rc1/youless-observer-0.1.0-rc1.tgz
     version: 0.1.0-rc1
-generated: "2024-03-26T18:06:11.161561059Z"
+generated: "2024-03-26T18:17:29.395075902Z"
