@@ -6,9 +6,9 @@ require (
 	github.com/go-pogo/buildinfo v0.6.0
 	github.com/go-pogo/env v0.4.1
 	github.com/go-pogo/errors v0.9.0
-	github.com/go-pogo/telemetry v0.0.0-20240319183413-6f2e6362d12e
+	github.com/go-pogo/telemetry v0.0.0-20240326173747-24e6cbcedba0
 	github.com/roeldev/youless-client v0.0.0-20240322181204-c0107c42836d
-	github.com/roeldev/youless-logger v0.0.0-20240322182326-d1086db6957d
+	github.com/roeldev/youless-logger v0.0.0-20240326174134-306af249a8f3
 	github.com/rs/zerolog v1.32.0
 	go.opentelemetry.io/otel v1.24.0
 	go.opentelemetry.io/otel/metric v1.24.0
@@ -22,8 +22,8 @@ require (
 	github.com/go-logr/logr v1.4.1 // indirect
 	github.com/go-logr/stdr v1.2.2 // indirect
 	github.com/go-logr/zerologr v1.2.3 // indirect
-	github.com/go-pogo/rawconv v0.5.1 // indirect
-	github.com/go-pogo/serv v0.2.0-rc1 // indirect
+	github.com/go-pogo/rawconv v0.5.2 // indirect
+	github.com/go-pogo/serv v0.2.0-rc2 // indirect
 	github.com/go-pogo/writing v0.1.1 // indirect
 	github.com/goccy/go-json v0.10.2 // indirect
 	github.com/golang/protobuf v1.5.4 // indirect
