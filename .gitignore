@@ -1,9 +1,11 @@
 /.idea
-/dist
-/vendor
 *.exe
+*.tgz
 .env.local
 .env.*.local
 coverage.out
 go.work
 go.work.sum
+tls.crt
+tls.key
+tls-ca.crt
