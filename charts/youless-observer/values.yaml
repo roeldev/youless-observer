@@ -14,6 +14,10 @@ service:
   port: 80
   annotations: {}
 
+#ingress:
+#  enabled: false
+#  flavour: kubernetes
+
 networkPolicy:
   create: true
 
@@ -111,11 +115,11 @@ observer:
     password: "" # YOULESS_PASSWORD
 
   # MQTT is not yet available.
-  mqtt:
-    enabled: false # MQTT_ENABLED
-    brokerUrls: "" # MQTT_BROKER_URLS
-    clientId: "" # MQTT_CLIENT_ID
-    topic: youless # MQTT_TOPIC
+#  mqtt:
+#    enabled: false # MQTT_ENABLED
+#    brokerUrls: "" # MQTT_BROKER_URLS
+#    clientId: "" # MQTT_CLIENT_ID
+#    topic: youless # MQTT_TOPIC
 
   excludePower: false # OBSERVER_EXCLUDE_POWER
   excludeS0: false # OBSERVER_EXCLUDE_S0
