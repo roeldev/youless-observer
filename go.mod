@@ -1,6 +1,6 @@
 module github.com/roeldev/youless-observer
 
-go 1.22
+go 1.21
 
 require (
 	github.com/go-pogo/buildinfo v0.6.0
