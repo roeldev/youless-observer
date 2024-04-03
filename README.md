@@ -1,5 +1,5 @@
-`youless-observer` Helm Charts
-==============================
+Helm Charts
+===========
 
 [![Latest release][latest-release-img]][latest-release-url]
 [![Artifact Hub][artifact-hub-img]][artifact-hub-url]
