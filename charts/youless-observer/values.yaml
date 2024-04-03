@@ -2,17 +2,21 @@ nameOverride: ""
 fullnameOverride: ""
 
 image:
+  # -- The image repository and name.
   repository: roeldev/youless-observer
+  # -- Tag of the image to deploy.
   tag: 0.1.0-rc2
+  # -- Image pull policy for the container.
   pullPolicy: IfNotPresent
-  pullSecrets: []
+  # -- Specify the imagePullSecrets on the pod.
+  pullSecrets: [ ]
 
-# Expose the deployment using the service.
+# -- Expose the deployment using the service.
 service:
   enabled: true
   type: LoadBalancer
   port: 80
-  annotations: {}
+  annotations: { }
 
 #ingress:
 #  enabled: false
@@ -22,41 +26,43 @@ networkPolicy:
   create: true
 
 observer:
-  # When true, overrides and sets:
-  #   log.level: "debug"
-  #   log.accessLog: true
-  #   tls.insecureSkipVerify: true
+  # -- When true, overrides and sets: `log.level: "debug"`, `log.accessLog: true`, `tls.insecureSkipVerify: true`.
   debug: false
 
   log:
-    # Active log level, must be one of: debug, info, warn, error, fatal, panic, disabled.
+    # -- Active log level, must be one of: debug, info, warn, error, fatal,
+    # panic, disabled.
     level: warn # LOG_LEVEL
-    # Add timestamp to log entries when true.
+    # -- Add timestamp to log entries when true.
     timestamp: false # LOG_TIMESTAMP
-    # Enable server access logging when true.
+    # -- Enable server access logging when true.
     accessLog: false # SERVER_ACCESS_LOG
 
   server:
-    # Port on which the server inside the container listens to.
+    # -- Port on which the server inside the container listens to.
     port: 2512 # SERVER_PORT
     tls:
+      # -- Enables TLS on the server when true.
       enabled: false
-      # Name of secret containing TLS certificate and key.
+      # -- Name of secret containing TLS certificate and key.
       secretName: ""
-      # Name of secret containing a CA certificate (ca.crt).
+      # -- Name of secret containing a CA certificate (ca.crt).
       caSecretName: ""
-      # Path to the TLS certificate file. Is ignored when secretName is set.
+      # -- Path to the TLS certificate file. Is ignored when `secretName` is set.
       certFile: "" # SERVER_TLS_CERT_FILE
-      # Path to the TLS key file. Is ignored when secretName is set.
+      # -- Path to the TLS key file. Is ignored when `secretName` is set.
       keyFile: "" # SERVER_TLS_KEY_FILE
-      # Path to the CA certificate file. Is ignored when caSecretName is set.
+      # -- Path to the CA certificate file. Is ignored when `caSecretName` is set.
       caCertFile: "" # SERVER_TLS_CA_CERT_FILE
-      # Enables mTLS when set to true.
+      # -- Enables mTLS when set to true.
       verifyClient: true # SERVER_TLS_VERIFY_CLIENT
       insecureSkipVerify: false # SERVER_TLS_INSECURE_SKIP_VERIFY
 
   otel:
+    # -- Optional [custom name](https://opentelemetry.io/docs/languages/sdk-configuration/general/#otel_service_name)
+    # for the service.
     serviceName: "" # OTEL_SERVICE_NAME
+    # -- Optional addition [resource attributes](https://opentelemetry.io/docs/languages/sdk-configuration/general/#otel_resource_attributes).
     resourceAttributes: "" # OTEL_RESOURCE_ATTRIBUTES
 
     # Collecting metrics via OTEL is always enabled.
@@ -64,30 +70,41 @@ observer:
       exportInterval: 10000 # OTEL_METRIC_EXPORT_INTERVAL
       exportTimeout: 10000 # OTEL_METRIC_EXPORT_TIMEOUT
 
-    # Collecting traces via OTEL may be disabled.
     traces:
+      # -- Enables tracing when true.
       enabled: true # OTEL_TRACES_ENABLED
+      # -- Specifies the [sampler](https://opentelemetry.io/docs/languages/sdk-configuration/general/#otel_traces_sampler)
+      # used to sample traces.
       sampler: parentbased_traceidratio # OTEL_TRACES_SAMPLER
+      # -- Specifies [arguments](https://opentelemetry.io/docs/languages/sdk-configuration/general/#otel_traces_sampler_arg),
+      # if applicable, to the sampler defined by `sampler`.
       samplerArg: 0.5 # OTEL_TRACES_SAMPLER_ARG
 
     exporter:
       otlp:
         enabled: true
+        # -- A base [endpoint URL](https://opentelemetry.io/docs/languages/sdk-configuration/otlp-exporter/#otel_exporter_otlp_endpoint)
+        # for any signal type, with an optionally-specified port number.
         endpoint: "" # OTEL_EXPORTER_OTLP_ENDPOINT
+        # -- A list of [headers](https://opentelemetry.io/docs/languages/sdk-configuration/otlp-exporter/#otel_exporter_otlp_headers)
+        # to apply to all outgoing data
         headers: "" # OTEL_EXPORTER_OTLP_HEADERS
+        # -- Specifies the [OTLP transport protocol](https://opentelemetry.io/docs/languages/sdk-configuration/otlp-exporter/#otel_exporter_otlp_protocol)
+        # to be used for all telemetry data.
         protocol: grpc # OTEL_EXPORTER_OTLP_PROTOCOL
+        # -- The [timeout](https://opentelemetry.io/docs/languages/sdk-configuration/otlp-exporter/#otel_exporter_otlp_timeout) value for all outgoing data, in milliseconds.
         timeout: 5000 # OTEL_EXPORTER_OTLP_TIMEOUT
         tls:
           enabled: false
-          # Name of secret containing TLS certificate and key.
+          # -- Name of secret containing TLS certificate and key.
           secretName: ""
-          # Name of secret containing a CA certificate (ca.crt).
+          # -- Name of secret containing a CA certificate (`ca.crt` key).
           caSecretName: ""
-          # Path to the TLS certificate file. Is ignored when secretName is set.
+          # -- Path to the TLS certificate file. Is ignored when `secretName` is set.
           certFile: "" # OTEL_EXPORTER_OTLP_CLIENT_CERTIFICATE
-          # Path to the TLS key file. Is ignored when secretName is set.
+          # -- Path to the TLS key file. Is ignored when `secretName` is set.
           keyFile: "" # OTEL_EXPORTER_OTLP_CLIENT_KEY
-          # Path to the CA certificate file. Is ignored when caSecretName is set.
+          # -- Path to the CA certificate file. Is ignored when `caSecretName` is set.
           caCertFile: "" # OTEL_EXPORTER_OTLP_CERTIFICATE
           insecureSkipVerify: false # OTEL_EXPORTER_OTLP_INSECURE
 
@@ -97,29 +114,27 @@ observer:
     endpoint: /metrics # PROMETHEUS_ENDPOINT
 
   youless:
-    # When a configMapName is provided, the config map is used to populate the
-    # YOULESS_BASE_URL, YOULESS_NAME, YOULESS_TIMEOUT and YOULESS_PASSWORD env
-    # variables. The config map must have the url and name keys. The timeout
-    # and password keys are optional.
+    # -- When a configMapName is provided, the config map is used to populate the `YOULESS_BASE_URL`, `YOULESS_NAME`,
+    # `YOULESS_TIMEOUT` and `YOULESS_PASSWORD` env variables. The config map must have the `url` and `name` keys.
+    # The `timeout` and `password` keys are optional.
     configMapName: ""
-    # When a secretName is provided, the secret is mounted and used as the
-    # value for YOULESS_PASSWORD_FILE.
+    # -- When provided, the secret is mounted and used as the value for `YOULESS_PASSWORD_FILE`.
     secretName: ""
-    # Url of the YouLess device to connect to.
+    # -- Url of the YouLess device to connect to.
     url: http://youless # YOULESS_BASE_URL
-    # Name of the YouLess device for identification.
+    # -- Name of the YouLess device for identification.
     name: YouLess # YOULESS_NAME
-    # Connection timeout for the YouLess device.
+    # -- Connection timeout for the YouLess device.
     timeout: 5s # YOULESS_TIMEOUT
-    # Password used to connect with the YouLess device.
+    # -- Password used to connect with the YouLess device. Is ignored when `secretName` is set.
     password: "" # YOULESS_PASSWORD
 
   # MQTT is not yet available.
-#  mqtt:
-#    enabled: false # MQTT_ENABLED
-#    brokerUrls: "" # MQTT_BROKER_URLS
-#    clientId: "" # MQTT_CLIENT_ID
-#    topic: youless # MQTT_TOPIC
+  #  mqtt:
+  #    enabled: false # MQTT_ENABLED
+  #    brokerUrls: "" # MQTT_BROKER_URLS
+  #    clientId: "" # MQTT_CLIENT_ID
+  #    topic: youless # MQTT_TOPIC
 
   excludePower: false # OBSERVER_EXCLUDE_POWER
   excludeS0: false # OBSERVER_EXCLUDE_S0
@@ -127,28 +142,28 @@ observer:
   excludeWater: false # OBSERVER_EXCLUDE_WATER
   singlePhase: true # OBSERVER_SINGLE_PHASE
 
-podAnnotations: {}
+podAnnotations: { }
 
-podSecurityContext: {}
+podSecurityContext: { }
 
-securityContext: {}
-# capabilities:
-#   drop:
-#   - ALL
-# readOnlyRootFilesystem: true
-# runAsNonRoot: true
-# runAsUser: 1000
+securityContext:
+  capabilities:
+    drop:
+      - ALL
+  readOnlyRootFilesystem: true
+  runAsNonRoot: true
+  runAsUser: 1000
 
 resources:
   limits:
-    cpu: 50m
+    cpu: 10m
     memory: 32Mi
   requests:
-    cpu: 50m
-  memory: 32Mi
+    cpu: 10m
+    memory: 32Mi
 
-nodeSelector: {}
+nodeSelector: { }
 
-tolerations: []
+tolerations: [ ]
 
-affinity: {}
+affinity: { }
