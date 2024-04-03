@@ -4,10 +4,6 @@ ARG GOLANG_VERSION="1"
 ###############################################################################
 FROM golang:${GOLANG_VERSION} as builder
 
-ENV CGO_ENABLED=0  \
-    GOOS=linux  \
-    GOARCH=amd64
-
 COPY ./ /go/build
 WORKDIR /go/build/
 
@@ -19,7 +15,7 @@ RUN set -eux  \
 RUN set -eux  \
     && go mod download  \
     && go test  \
-    && go build  \
+    && CGO_ENABLED=0 go build  \
         -tags=notrace  \
         -ldflags="-s -w"  \
         -o="/root-out/main"  \
