@@ -12,17 +12,6 @@ tasks:
     cmds:
       - act -q -j test
 
-  experimental:
-    desc: Build and release experimental Docker image
-    cmds:
-      - task: experimental:build
-      - docker push roeldev/youless-observer:experimental
-
-  experimental:build:
-    desc: Build experimental Docker image
-    cmds:
-      - docker buildx build --no-cache --tag roeldev/youless-observer:experimental .
-
   chart:lint:
     desc: Lint Helm chart
     cmds:
