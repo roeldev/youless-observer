@@ -18,7 +18,6 @@ RUN set -eux  \
 
 RUN set -eux  \
     && go mod download  \
-    && go generate ./...  \
     && go test  \
     && go build  \
         -tags=notrace  \
