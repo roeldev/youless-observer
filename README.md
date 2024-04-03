@@ -28,14 +28,12 @@ youless-observer
 [doc-url]: https://pkg.go.dev/github.com/roeldev/youless-observer
 
 Service `youless-observer` is a real-time utility usage observer for the _YouLess energy meter_ device. It collects
-metrics data and can send it to any OTEL compatible backend, notify MQTT broker(s), or stream it via gRPC.
+metrics data and can send it to any OTEL compatible backend, or expose it via a Prometheus compatible metrics endpoint.
 
 Key features are:
 
 - export metrics via OTLP
-- scrape metrics via Prometheus
-- send metrics via MQTT (work in progress)
-- stream metrics via gRPC (work in progress)
+- expose metrics for Prometheus
 
 > Need to store the metrics data for a longer period of time? Have a look
 > at [youless-logger](https://github.com/roeldev/youless-logger).
