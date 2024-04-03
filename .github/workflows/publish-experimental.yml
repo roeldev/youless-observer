@@ -1,4 +1,4 @@
-name: release-experimental
+name: publish-experimental
 on:
   push:
     branches: [ main ]
@@ -10,17 +10,22 @@ on:
       - 'Taskfile.*'
 
 jobs:
-  release-experimental:
+  publish-experimental:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Install Task
-        uses: arduino/setup-task@v2
-
       - uses: docker/login-action@v3
         with:
           username: "${{ secrets.DOCKER_USERNAME }}"
           password: "${{ secrets.DOCKER_PASSWORD }}"
 
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
       - name: Build and push Docker image
-        run: task experimental
+        uses: docker/build-push-action@v5
+        with:
+          platforms: linux/amd64,linux/arm64,linux/arm/v6,linux/arm/v7
+          pull: true
+          push: true
+          tags: roeldev/youless-observer:experimental
