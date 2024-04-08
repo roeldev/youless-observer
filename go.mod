@@ -4,7 +4,7 @@ go 1.21
 
 require (
 	github.com/go-pogo/buildinfo v0.6.0
-	github.com/go-pogo/env v0.4.1
+	github.com/go-pogo/env v0.4.2
 	github.com/go-pogo/errors v0.9.0
 	github.com/go-pogo/telemetry v0.0.0-20240326173747-24e6cbcedba0
 	github.com/roeldev/youless-client v0.0.0-20240322181204-c0107c42836d

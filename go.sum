@@ -19,8 +19,8 @@ github.com/go-logr/zerologr v1.2.3 h1:up5N9vcH9Xck3jJkXzgyOxozT14R47IyDODz8LM1KS
 github.com/go-logr/zerologr v1.2.3/go.mod h1:BxwGo7y5zgSHYR1BjbnHPyF/5ZjVKfKxAZANVu6E8Ho=
 github.com/go-pogo/buildinfo v0.6.0 h1:kuo/jNq+/wlgMk/ap2b/Gw/1WOWMWvSjBxKIBcgWaQI=
 github.com/go-pogo/buildinfo v0.6.0/go.mod h1:/S1kwu5ND4usz0Mxus0poGwN+xY/l/ETVVDDGzQAmUQ=
-github.com/go-pogo/env v0.4.1 h1:bMT6aHXoCSpbP5/MYcyGRbkKy2y7ckzGUHxDO5lDB1o=
-github.com/go-pogo/env v0.4.1/go.mod h1:8I/lSBOQGzmqbh1tFzsWGVUjGcZ/CBB1G1Z8M2DFbq8=
+github.com/go-pogo/env v0.4.2 h1:POj673jIpMy/w1m/FCCQLuAUHLtSe1jf/3WBQkBeXXM=
+github.com/go-pogo/env v0.4.2/go.mod h1:c7uMz0gsCEIRksGGcBofGRl3f8jG9GnlBllpXyTy72Y=
 github.com/go-pogo/errors v0.9.0 h1:fM3PHQ9hs7CE53FWG7JLbAr9cYu3ly9lb8CmgttRy+k=
 github.com/go-pogo/errors v0.9.0/go.mod h1:I6kCHOu3yR1WeJtGWusyTxQUQX257cw6xFVnYB4+Rtw=
 github.com/go-pogo/rawconv v0.5.2 h1:u/VaILbQzph2jHYYvnW02jF6nFaSl2Ae5u4NTyBaSx4=
