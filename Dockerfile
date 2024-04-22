@@ -12,10 +12,12 @@ RUN set -eux  \
     && mkdir -p /root-out/  \
     && cp cmd/${APP}/.env /root-out/.env
 
+ARG TARGETOS
+ARG TARGETARCH
 RUN set -eux  \
-    && go mod download  \
+    && go mod download -x  \
     && go test  \
-    && CGO_ENABLED=0 go build  \
+    && CGO_ENABLED=0 GOOS=${TARGETOS} GOARCH=${TARGETARCH} go build  \
         -tags=notrace  \
         -ldflags="-s -w"  \
         -o="/root-out/main"  \
