@@ -1,7 +1,7 @@
 `youless-observer` Helm Charts
 ==============================
 
-[![Version: 0.1.0-rc3](https://img.shields.io/badge/Version-0.1.0--rc2-informational?style=flat) ][release-url]
+[![Version: 0.1.0-rc3](https://img.shields.io/badge/Version-0.1.0--rc3-informational?style=flat) ][release-url]
 [![Artifact Hub][artifact-hub-img]][artifact-hub-url]
 
 [release-url]: https://github.com/roeldev/youless-observer/releases/tag/v0.1.0-rc3
