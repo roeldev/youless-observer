@@ -33,10 +33,12 @@ jobs:
       - name: Get latest release info
         id: get_latest
         run: |
-          echo "::set-output name=resultJson::$(curl -s "https://api.github.com/repos/roeldev/youless-observer/releases/latest")"
+          apt-get install jq \
+          latest=$(curl -s "https://api.github.com/repos/roeldev/youless-observer/releases/latest" | jq '.tag_name') \
+          echo "LATEST=$latest" >> "$GITHUB_ENV"
 
       - name: Tag as latest
-        if: ${{ fromJSON(steps.get_latest.outputs.resultJson).tag_name == github.ref_name }}
+        if: ${{ env.LATEST == github.ref_name }}
         run: |
           docker tag roeldev/youless-observer:${{ env.VERSION }} roeldev/youless-observer:latest
           docker push roeldev/youless-observer:latest
