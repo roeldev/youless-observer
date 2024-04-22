@@ -32,6 +32,10 @@ func main() {
 	// collecting metrics is always enabled
 	conf.Telemetry.Meter.Enabled = true
 
+	if err := conf.Validate(); err != nil {
+		fatalErr(log, err, "invalid configuration", 1)
+	}
+
 	app, err := observerapp.New(conf, log)
 	if err != nil {
 		log.Err(err).Msg("unable to create observer app")

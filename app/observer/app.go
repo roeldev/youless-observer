@@ -25,18 +25,16 @@ const (
 // the YouLess device using a youless.Client. It also runs a server to expose
 // health status, build info and metrics endpoints.
 type App struct {
+	log      zerolog.Logger
 	server   *server.Server
 	client   *youlessclient.Client
 	observer *youlessobserver.Observer
 }
 
 func New(conf Config, log zerolog.Logger) (*App, error) {
-	var err error
-	if err = conf.Validate(); err != nil {
-		return nil, err
-	}
-
 	var app App
+	var err error
+
 	app.server, err = server.New("observer", conf.Server, log, nil,
 		server.WithBuildInfo(buildinfo.New(youlessobserver.Version).
 			WithExtra("client_version", youlessclient.Version).
