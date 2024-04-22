@@ -7,9 +7,13 @@ metadata:
     {{- include "observer.labels" . | nindent 4 }}
 
 spec:
-  strategy:
-    type: Recreate
   replicas: 1
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0
+  revisionHistoryLimit: 2
   selector:
     matchLabels:
       {{- include "observer.selectorLabels" . | nindent 6 }}
@@ -36,16 +40,24 @@ spec:
             - name: http
               protocol: TCP
               containerPort: {{ .Values.observer.server.port }}
-          livenessProbe:
-            httpGet:
-              path: /healthy
-              port: http
-              scheme: {{ .Values.observer.server.tls.enabled | ternary "HTTPS" "HTTP" | quote }}
           readinessProbe:
+            {{- if .Values.observer.server.tls.enabled }}
+            exec:
+              command: ["/main", "healthcheck"]
+            {{- else }}
             httpGet:
               path: /healthy
               port: http
-              scheme: {{ .Values.observer.server.tls.enabled | ternary "HTTPS" "HTTP" | quote }}
+            {{- end }}
+          livenessProbe:
+            {{- if .Values.observer.server.tls.enabled }}
+            exec:
+              command: [ "/main", "healthcheck" ]
+            {{- else }}
+            httpGet:
+              path: /healthy
+              port: http
+            {{- end }}
           env:
             - name: LOG_LEVEL
               value: {{ .Values.observer.debug | ternary "debug" .Values.observer.log.level | quote }}
