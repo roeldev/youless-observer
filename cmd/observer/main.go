@@ -38,18 +38,13 @@ func main() {
 
 	app, err := observerapp.New(conf, log)
 	if err != nil {
-		log.Err(err).Msg("unable to create observer app")
-		os.Exit(errors.GetExitCodeOr(err, 2))
+		fatalErr(log, err, "unable to create observer app", 2)
 	}
 
-	run(log, app.Run, app.Shutdown)
-}
-
-func run(log zerolog.Logger, run, shutdown func(context.Context) error) {
 	runCtx, stopFn := signal.NotifyContext(context.Background(), syscall.SIGINT, syscall.SIGTERM)
 	go func() {
 		defer stopFn()
-		if err := run(runCtx); err != nil {
+		if err := app.Run(runCtx); err != nil {
 			log.Err(err).Msg("error during run")
 		}
 	}()
@@ -58,10 +53,14 @@ func run(log zerolog.Logger, run, shutdown func(context.Context) error) {
 	closeCtx, stopFn := signal.NotifyContext(context.Background(), syscall.SIGINT, syscall.SIGTERM)
 	go func() {
 		defer stopFn()
-		if err := shutdown(closeCtx); err != nil {
-			log.Err(err).Msg("error during graceful shutdown")
-			os.Exit(errors.GetExitCodeOr(err, 4))
+		if err := app.Shutdown(closeCtx); err != nil {
+			fatalErr(log, err, "error during shutdown", 4)
 		}
 	}()
 	<-closeCtx.Done()
+}
+
+func fatalErr(log zerolog.Logger, err error, msg string, code int) {
+	log.Err(err).Msg(msg)
+	os.Exit(errors.GetExitCodeOr(err, code))
 }

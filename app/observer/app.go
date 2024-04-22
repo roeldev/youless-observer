@@ -25,7 +25,6 @@ const (
 // the YouLess device using a youless.Client. It also runs a server to expose
 // health status, build info and metrics endpoints.
 type App struct {
-	log      zerolog.Logger
 	server   *server.Server
 	client   *youlessclient.Client
 	observer *youlessobserver.Observer

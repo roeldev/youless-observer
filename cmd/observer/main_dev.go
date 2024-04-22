@@ -41,7 +41,7 @@ func init() {
 			return err
 		}
 
-		prefixDir(dir, &conf.Server.TLS.CaCertFile)
+		prefixDir(dir, &conf.Server.TLS.CACertFile)
 		prefixDir(dir, &conf.Server.TLS.CertFile)
 		prefixDir(dir, &conf.Server.TLS.KeyFile)
 		return nil
