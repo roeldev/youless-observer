@@ -4,6 +4,7 @@
 .env.local
 .env.*.local
 coverage.out
+*.pprof
 go.work
 go.work.sum
 tls.crt
