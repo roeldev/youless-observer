@@ -1,10 +1,10 @@
 `youless-observer` Helm Charts
 ==============================
 
-[![Version: 0.1.0-rc2](https://img.shields.io/badge/Version-0.1.0--rc2-informational?style=flat) ][release-url]
+[![Version: 0.1.0-rc3](https://img.shields.io/badge/Version-0.1.0--rc2-informational?style=flat) ][release-url]
 [![Artifact Hub][artifact-hub-img]][artifact-hub-url]
 
-[release-url]: https://github.com/roeldev/youless-observer/releases/tag/v0.1.0-rc2
+[release-url]: https://github.com/roeldev/youless-observer/releases/tag/v0.1.0-rc3
 
 [artifact-hub-img]: https://img.shields.io/endpoint?url=https://artifacthub.io/badge/repository/youless-observer
 
@@ -30,7 +30,7 @@ helm repo add youless-observer https://roeldev.github.io/youless-observer
 | nameOverride | string | `""` |  |
 | fullnameOverride | string | `""` |  |
 | image.repository | string | `"roeldev/youless-observer"` | The image repository and name. |
-| image.tag | string | `"0.1.0-rc2"` | Tag of the image to deploy. |
+| image.tag | string | `"0.1.0-rc3"` | Tag of the image to deploy. |
 | image.pullPolicy | string | `"IfNotPresent"` | Image pull policy for the container. |
 | image.pullSecrets | list | `[]` | Specify the imagePullSecrets on the pod. |
 | service | object | `{"annotations":{},"enabled":true,"port":80,"type":"LoadBalancer"}` | Expose the deployment using the service. |
