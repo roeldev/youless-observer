@@ -19,7 +19,7 @@ func WithLogger(l Logger) Option {
 
 func WithRegisterer(name string, reg Registerer) Option {
 	return func(o *Observer) error {
-		o.registerers[name] = reg
+		o.registerers[name] = &registerer{Registerer: reg}
 		return nil
 	}
 }

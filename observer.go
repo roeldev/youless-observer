@@ -5,10 +5,13 @@
 package youlessobserver
 
 import (
+	"context"
 	"github.com/go-pogo/errors"
+	"github.com/go-pogo/healthcheck"
 	youlessclient "github.com/roeldev/youless-client"
 	"go.opentelemetry.io/otel/metric"
 	"sync/atomic"
+	"time"
 )
 
 const (
@@ -21,16 +24,23 @@ type Registerer interface {
 }
 
 type Registration interface {
+	LastCheck() time.Time
 	Unregister() error
 }
+
+var _ healthcheck.StatusCheckerRegisterer = (*Observer)(nil)
 
 type Observer struct {
 	log  Logger
 	prov metric.MeterProvider
 
-	registerers   map[string]Registerer
-	registrations []Registration
-	started       atomic.Bool
+	registerers map[string]*registerer
+	started     atomic.Bool
+}
+
+type registerer struct {
+	Registerer
+	registration Registration
 }
 
 const panicNilMeterProvider = "youlessobserver: metric.MeterProvider must not be nil"
@@ -41,9 +51,8 @@ func NewObserver(prov metric.MeterProvider, opts ...Option) (*Observer, error) {
 	}
 
 	o := Observer{
-		prov:          prov,
-		registerers:   make(map[string]Registerer, len(opts)),
-		registrations: make([]Registration, 0, len(opts)),
+		prov:        prov,
+		registerers: make(map[string]*registerer, len(opts)),
 	}
 	for _, opt := range opts {
 		if err := opt(&o); err != nil {
@@ -74,7 +83,7 @@ func (o *Observer) Start() error {
 		}
 		if r != nil {
 			o.log.Register(name)
-			o.registrations = append(o.registrations, r)
+			reg.registration = r
 		}
 	}
 	return nil
@@ -87,12 +96,30 @@ func (o *Observer) Stop() error {
 	}
 
 	var err error
-	for _, reg := range o.registrations {
-		err = errors.Append(err, reg.Unregister())
+	for _, reg := range o.registerers {
+		err = errors.Append(err, reg.registration.Unregister())
 	}
 
 	o.log.ObserverStop()
 	return err
+}
+
+func (o *Observer) RegisterStatusCheckers(c healthcheck.Registerer) {
+	for name, reg := range o.registerers {
+		c.Register(name, reg.statusChecker(15*time.Second))
+	}
+}
+
+func (r *registerer) statusChecker(t time.Duration) healthcheck.StatusCheckerFunc {
+	return func(_ context.Context) healthcheck.Status {
+		if r.registration == nil {
+			return healthcheck.StatusUnknown
+		}
+		if time.Since(r.registration.LastCheck()) > t {
+			return healthcheck.StatusUnhealthy
+		}
+		return healthcheck.StatusHealthy
+	}
 }
 
 func must[T any](res T, err error) T {

@@ -62,6 +62,7 @@ func New(conf Config, log zerolog.Logger) (*App, error) {
 		return nil, errors.Wrap(err, ErrObserverCreateFailure)
 	}
 
+	app.observer.RegisterStatusCheckers(app.server.HealthChecker())
 	return &app, nil
 }
 

@@ -10,6 +10,8 @@ import (
 	youlessclient "github.com/roeldev/youless-client"
 	"go.opentelemetry.io/otel/attribute"
 	"go.opentelemetry.io/otel/metric"
+	"sync/atomic"
+	"time"
 )
 
 const MeterReadingObserverName = "youless.observer.meter"
@@ -50,6 +52,7 @@ var _ Registration = (*meterReadingRegistration)(nil)
 type meterReadingRegistration struct {
 	metric.Registration
 	conf MeterReadingRegisterer
+	last atomic.Value
 
 	electricityImport1 metric.Float64ObservableGauge
 	electricityImport2 metric.Float64ObservableGauge
@@ -68,6 +71,7 @@ func newMeterReadingRegistration(conf *MeterReadingRegisterer, meter metric.Mete
 	instruments := make([]metric.Observable, 0, 10)
 
 	reg := meterReadingRegistration{conf: *conf}
+	reg.last.Store(time.Time{})
 
 	if !conf.ExcludePower {
 		reg.electricityImport1 = must(meter.Float64ObservableGauge("electricity_import_1",
@@ -139,6 +143,10 @@ func newMeterReadingRegistration(conf *MeterReadingRegisterer, meter metric.Mete
 	return &reg, nil
 }
 
+func (reg *meterReadingRegistration) LastCheck() time.Time {
+	return reg.last.Load().(time.Time)
+}
+
 func (reg *meterReadingRegistration) callback(ctx context.Context, observer metric.Observer) error {
 	d, err := reg.conf.client.GetMeterReading(ctx)
 	if err != nil {
@@ -168,5 +176,7 @@ func (reg *meterReadingRegistration) callback(ctx context.Context, observer metr
 		attr := attribute.NewSet(attribute.Stringer("timestamp", d.WaterTime()))
 		observer.ObserveFloat64(reg.water, d.Water, metric.WithAttributeSet(attr))
 	}
+
+	reg.last.Store(time.Now())
 	return nil
 }

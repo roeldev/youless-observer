@@ -10,6 +10,8 @@ import (
 	youlessclient "github.com/roeldev/youless-client"
 	"go.opentelemetry.io/otel/attribute"
 	"go.opentelemetry.io/otel/metric"
+	"sync/atomic"
+	"time"
 )
 
 const PhaseReadingObserverName = "youless.observer.phase"
@@ -48,6 +50,7 @@ var _ Registration = (*phaseReadingRegistration)(nil)
 type phaseReadingRegistration struct {
 	metric.Registration
 	conf PhaseReadingRegisterer
+	last atomic.Value
 
 	power1 metric.Int64ObservableGauge
 	power2 metric.Int64ObservableGauge
@@ -79,6 +82,7 @@ func newPhaseReadingRegistration(conf *PhaseReadingRegisterer, meter metric.Mete
 			metric.WithUnit("V"),
 		)),
 	}
+	reg.last.Store(time.Time{})
 
 	instruments := make([]metric.Observable, 0, 9)
 	instruments = append(instruments, reg.power1, reg.current1, reg.voltage1)
@@ -130,6 +134,10 @@ func newPhaseReadingRegistration(conf *PhaseReadingRegisterer, meter metric.Mete
 	return &reg, nil
 }
 
+func (reg *phaseReadingRegistration) LastCheck() time.Time {
+	return reg.last.Load().(time.Time)
+}
+
 func (reg *phaseReadingRegistration) callback(ctx context.Context, observer metric.Observer) error {
 	d, err := reg.conf.client.GetPhaseReading(ctx)
 	if err != nil {
@@ -157,5 +165,6 @@ func (reg *phaseReadingRegistration) callback(ctx context.Context, observer metr
 		observer.ObserveFloat64(reg.voltage3, d.Voltage3, metric.WithAttributeSet(attr))
 	}
 
+	reg.last.Store(time.Now())
 	return nil
 }
