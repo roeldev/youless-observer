@@ -27,6 +27,7 @@ tasks:
       - helm package charts/youless-observer
 
   chart:readme:
-    desc: Generate README.md from Helm chart
+    desc: Generate Helm chart README
+    # https://github.com/norwoodj/helm-docs/
     cmds:
       - go run github.com/norwoodj/helm-docs/cmd/helm-docs@latest -t=README.tmpl.md -s=file -b=flat
