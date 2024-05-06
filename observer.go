@@ -28,7 +28,7 @@ type Registration interface {
 	Unregister() error
 }
 
-var _ healthcheck.StatusCheckerRegisterer = (*Observer)(nil)
+var _ healthcheck.HealthCheckerRegisterer = (*Observer)(nil)
 
 type Observer struct {
 	log  Logger
@@ -76,14 +76,14 @@ func (o *Observer) Start() error {
 	o.started.Store(true)
 	opts := metric.WithInstrumentationVersion(youlessclient.Version)
 
-	for name, reg := range o.registerers {
-		r, err := reg.Register(o.prov.Meter(name, opts))
+	for name, r := range o.registerers {
+		reg, err := r.Register(o.prov.Meter(name, opts))
 		if err != nil {
 			return err
 		}
-		if r != nil {
+		if reg != nil {
 			o.log.Register(name)
-			reg.registration = r
+			r.registration = reg
 		}
 	}
 	return nil
@@ -96,21 +96,21 @@ func (o *Observer) Stop() error {
 	}
 
 	var err error
-	for _, reg := range o.registerers {
-		err = errors.Append(err, reg.registration.Unregister())
+	for _, r := range o.registerers {
+		err = errors.Append(err, r.registration.Unregister())
 	}
 
 	o.log.ObserverStop()
 	return err
 }
 
-func (o *Observer) RegisterStatusCheckers(c healthcheck.Registerer) {
-	for name, reg := range o.registerers {
-		c.Register(name, reg.statusChecker(15*time.Second))
+func (o *Observer) RegisterHealthCheckers(reg healthcheck.Registerer) {
+	for name, r := range o.registerers {
+		reg.Register(name, r.healthChecker(15*time.Second))
 	}
 }
 
-func (r *registerer) statusChecker(t time.Duration) healthcheck.StatusCheckerFunc {
+func (r *registerer) healthChecker(t time.Duration) healthcheck.HealthCheckerFunc {
 	return func(_ context.Context) healthcheck.Status {
 		if r.registration == nil {
 			return healthcheck.StatusUnknown

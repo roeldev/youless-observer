@@ -8,6 +8,7 @@ package main
 
 import (
 	"fmt"
+	"github.com/go-pogo/easytls"
 	"github.com/go-pogo/env"
 	"github.com/go-pogo/env/dotenv"
 	observerapp "github.com/roeldev/youless-observer/app/observer"
@@ -41,7 +42,10 @@ func init() {
 			return err
 		}
 
-		prefixDir(dir, &conf.Server.TLS.CACertFile)
+		caCertFile := conf.Server.TLS.CACertFile.String()
+		prefixDir(dir, &caCertFile)
+		conf.Server.TLS.CACertFile = easytls.CertificateFile(caCertFile)
+
 		prefixDir(dir, &conf.Server.TLS.CertFile)
 		prefixDir(dir, &conf.Server.TLS.KeyFile)
 		return nil

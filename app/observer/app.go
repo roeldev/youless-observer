@@ -8,6 +8,7 @@ import (
 	"context"
 	"github.com/go-pogo/buildinfo"
 	"github.com/go-pogo/errors"
+	"github.com/go-pogo/errors/errgroup"
 	youlessclient "github.com/roeldev/youless-client"
 	"github.com/roeldev/youless-logger"
 	"github.com/roeldev/youless-logger/server"
@@ -34,7 +35,7 @@ func New(conf Config, log zerolog.Logger) (*App, error) {
 	var app App
 	var err error
 
-	app.server, err = server.New("observer", conf.Server, log, nil,
+	app.server, err = server.New("observer", conf.Server, log,
 		server.WithBuildInfo(buildinfo.New(youlessobserver.Version).
 			WithExtra("client_version", youlessclient.Version).
 			WithExtra("logger_version", youlesslogger.Version),
@@ -62,7 +63,7 @@ func New(conf Config, log zerolog.Logger) (*App, error) {
 		return nil, errors.Wrap(err, ErrObserverCreateFailure)
 	}
 
-	app.observer.RegisterStatusCheckers(app.server.HealthChecker())
+	app.observer.RegisterHealthCheckers(app.server.HealthChecker())
 	return &app, nil
 }
 
@@ -76,7 +77,14 @@ func (app *App) Run(ctx context.Context) error {
 
 // Shutdown the app by stopping the internal observer and server.
 func (app *App) Shutdown(ctx context.Context) error {
-	return errors.Append(app.observer.Stop(), app.server.Shutdown(ctx))
+	wg, ctx := errgroup.WithContext(ctx)
+	wg.Go(func() error {
+		return app.server.Shutdown(ctx)
+	})
+	wg.Go(func() error {
+		return app.observer.Stop()
+	})
+	return wg.Wait()
 }
 
 var _ youlessobserver.Logger = (*logger)(nil)

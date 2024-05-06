@@ -4,12 +4,13 @@ go 1.22.0
 
 require (
 	github.com/go-pogo/buildinfo v0.6.0
+	github.com/go-pogo/easytls v0.0.0-20240506180301-47e5867d711f
 	github.com/go-pogo/env v0.4.3
 	github.com/go-pogo/errors v0.9.0
-	github.com/go-pogo/healthcheck v0.0.0-20240503192704-99879f8f8fa6
+	github.com/go-pogo/healthcheck v0.0.0-20240506163415-8efad8a77f9a
 	github.com/go-pogo/telemetry v0.0.0-20240504135631-61f9b35fe391
 	github.com/roeldev/youless-client v0.0.0-20240504140222-76908f8c372c
-	github.com/roeldev/youless-logger v0.0.0-20240504140408-5e304e68370f
+	github.com/roeldev/youless-logger v0.0.0-20240506181803-70ee2036a771
 	github.com/rs/zerolog v1.32.0
 	go.opentelemetry.io/otel v1.26.0
 	go.opentelemetry.io/otel/metric v1.26.0
@@ -23,7 +24,6 @@ require (
 	github.com/go-logr/logr v1.4.1 // indirect
 	github.com/go-logr/stdr v1.2.2 // indirect
 	github.com/go-logr/zerologr v1.2.3 // indirect
-	github.com/go-pogo/easytls v0.0.0-20240503185512-df01a3c3e3d3 // indirect
 	github.com/go-pogo/rawconv v0.5.3 // indirect
 	github.com/go-pogo/serv v0.3.0 // indirect
 	github.com/go-pogo/writing v0.1.1 // indirect
@@ -46,10 +46,10 @@ require (
 	go.opentelemetry.io/otel/sdk/metric v1.26.0 // indirect
 	go.opentelemetry.io/otel/trace v1.26.0 // indirect
 	go.opentelemetry.io/proto/otlp v1.2.0 // indirect
-	golang.org/x/net v0.24.0 // indirect
+	golang.org/x/net v0.25.0 // indirect
 	golang.org/x/sync v0.7.0 // indirect
-	golang.org/x/sys v0.19.0 // indirect
-	golang.org/x/text v0.14.0 // indirect
+	golang.org/x/sys v0.20.0 // indirect
+	golang.org/x/text v0.15.0 // indirect
 	golang.org/x/xerrors v0.0.0-20231012003039-104605ab7028 // indirect
 	google.golang.org/genproto/googleapis/api v0.0.0-20240429193739-8cf5692501f6 // indirect
 	google.golang.org/genproto/googleapis/rpc v0.0.0-20240429193739-8cf5692501f6 // indirect
