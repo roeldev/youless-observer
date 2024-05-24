@@ -10,7 +10,6 @@ import (
 	"github.com/go-pogo/env/envfile"
 	"github.com/go-pogo/errors"
 	"github.com/roeldev/youless-observer/app/observer"
-	"log"
 	"path/filepath"
 	"runtime"
 )
@@ -18,25 +17,5 @@ import (
 func main() {
 	_, dir, _, _ := runtime.Caller(0)
 	dir = filepath.Dir(dir)
-
-	filename := filepath.Join(dir, ".env")
-	if err := write(filename); err != nil {
-		log.Printf("cannot write to %s: %s", filename, err)
-	}
-}
-
-func write(filename string) (err error) {
-	enc, err := envfile.Create(filename)
-	if err != nil {
-		return errors.WithStack(err)
-	}
-
-	enc.TakeValues = true
-	defer errors.AppendFunc(&err, enc.Close)
-
-	if err = enc.Encode(observerapp.Config{}); err != nil {
-		err = errors.WithStack(err)
-		return
-	}
-	return
+	errors.FatalOnErr(envfile.Generate(dir, ".env", observerapp.Config{}))
 }
