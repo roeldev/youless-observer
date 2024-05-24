@@ -1,11 +1,8 @@
 nameOverride: ""
 fullnameOverride: ""
 
+# Global image settings.
 image:
-  # -- The image repository and name.
-  repository: roeldev/youless-observer
-  # -- Tag of the image to deploy.
-  tag: 0.1.0-rc3
   # -- Image pull policy for the container.
   pullPolicy: IfNotPresent
   # -- Specify the imagePullSecrets on the pod.
@@ -28,6 +25,14 @@ networkPolicy:
 observer:
   # -- When true, overrides and sets: `log.level: "debug"`, `log.accessLog: true`, `tls.insecureSkipVerify: true`.
   debug: false
+
+  image:
+    # -- The image repository and name.
+    repository: roeldev/youless-observer
+    # -- Tag of the image to deploy.
+    tag: 0.1.0-rc3
+    # -- Image pull policy for the container.
+    pullPolicy: IfNotPresent
 
   log:
     # -- Active log level, must be one of: debug, info, warn, error, fatal,
@@ -141,6 +146,11 @@ observer:
   excludeGas: false # OBSERVER_EXCLUDE_GAS
   excludeWater: false # OBSERVER_EXCLUDE_WATER
   singlePhase: true # OBSERVER_SINGLE_PHASE
+
+readinessProbe:
+  periodSeconds: 10
+  timeoutSeconds: 1
+  failureThreshold: 3
 
 podAnnotations: { }
 

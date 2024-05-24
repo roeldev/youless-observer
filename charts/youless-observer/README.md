@@ -29,13 +29,14 @@ helm repo add youless-observer https://roeldev.github.io/youless-observer
 |-----|------|---------|-------------|
 | nameOverride | string | `""` |  |
 | fullnameOverride | string | `""` |  |
-| image.repository | string | `"roeldev/youless-observer"` | The image repository and name. |
-| image.tag | string | `"0.1.0-rc3"` | Tag of the image to deploy. |
 | image.pullPolicy | string | `"IfNotPresent"` | Image pull policy for the container. |
 | image.pullSecrets | list | `[]` | Specify the imagePullSecrets on the pod. |
 | service | object | `{"annotations":{},"enabled":true,"port":80,"type":"LoadBalancer"}` | Expose the deployment using the service. |
 | networkPolicy.create | bool | `true` |  |
 | observer.debug | bool | `false` | When true, overrides and sets: `log.level: "debug"`, `log.accessLog: true`, `tls.insecureSkipVerify: true`. |
+| observer.image.repository | string | `"roeldev/youless-observer"` | The image repository and name. |
+| observer.image.tag | string | `"0.1.0-rc3"` | Tag of the image to deploy. |
+| observer.image.pullPolicy | string | `"IfNotPresent"` | Image pull policy for the container. |
 | observer.log.level | string | `"warn"` | Active log level, must be one of: debug, info, warn, error, fatal, panic, disabled. |
 | observer.log.timestamp | bool | `false` | Add timestamp to log entries when true. |
 | observer.log.accessLog | bool | `false` | Enable server access logging when true. |
@@ -80,6 +81,9 @@ helm repo add youless-observer https://roeldev.github.io/youless-observer
 | observer.excludeGas | bool | `false` |  |
 | observer.excludeWater | bool | `false` |  |
 | observer.singlePhase | bool | `true` |  |
+| readinessProbe.periodSeconds | int | `10` |  |
+| readinessProbe.timeoutSeconds | int | `1` |  |
+| readinessProbe.failureThreshold | int | `3` |  |
 | podAnnotations | object | `{}` |  |
 | podSecurityContext | object | `{}` |  |
 | securityContext.capabilities.drop[0] | string | `"ALL"` |  |

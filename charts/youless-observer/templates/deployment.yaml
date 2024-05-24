@@ -34,30 +34,41 @@ spec:
         - name: {{ .Chart.Name }}
           securityContext:
             {{- toYaml .Values.securityContext | nindent 12 }}
-          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
-          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          image: "{{ .Values.observer.image.repository }}:{{ .Values.observer.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.observer.image.pullPolicy }}
           ports:
             - name: http
               protocol: TCP
               containerPort: {{ .Values.observer.server.port }}
+
           readinessProbe:
-            {{- if .Values.observer.server.tls.enabled }}
-            exec:
-              command: ["/main", "healthcheck"]
+            {{- if and .Values.observer.server.tls.enabled .Values.observer.server.tls.verifyClient }}
+            httpGet:
+              # todo: add mtls health probe
+              path: /healthy
+              port: http
+              scheme: HTTPS
             {{- else }}
             httpGet:
               path: /healthy
               port: http
             {{- end }}
+            periodSeconds: {{ .Values.readinessProbe.periodSeconds }}
+            timeoutSeconds: {{ .Values.readinessProbe.timeoutSeconds }}
+            failureThreshold: {{ .Values.readinessProbe.failureThreshold }}
           livenessProbe:
-            {{- if .Values.observer.server.tls.enabled }}
-            exec:
-              command: [ "/main", "healthcheck" ]
+            {{- if and .Values.observer.server.tls.enabled .Values.observer.server.tls.verifyClient }}
+            httpGet:
+              # todo: add mtls health probe
+              path: /healthy
+              port: http
+              scheme: HTTPS
             {{- else }}
             httpGet:
               path: /healthy
               port: http
             {{- end }}
+
           env:
             - name: LOG_LEVEL
               value: {{ .Values.observer.debug | ternary "debug" .Values.observer.log.level | quote }}
@@ -68,8 +79,7 @@ spec:
             {{- if .Values.observer.server }}
             - name: SERVER_PORT
               value: {{ .Values.observer.server.port | quote }}
-            {{- if .Values.observer.server.tls }}
-            {{- if .Values.observer.server.tls.enabled }}
+            {{- if and .Values.observer.server.tls .Values.observer.server.tls.enabled }}
             - name: SERVER_TLS_VERIFY_CLIENT
               value: {{ .Values.observer.server.tls.verifyClient | quote }}
             - name: SERVER_TLS_INSECURE_SKIP_VERIFY
@@ -77,7 +87,7 @@ spec:
             {{- if .Values.observer.server.tls.caSecretName }}
             - name: SERVER_TLS_CA_CERT_FILE
               value: "/mnt/server-tls-ca/ca.crt"
-            {{- else if .Values.observer.server.tls.caSecretName }}
+            {{- else if .Values.observer.server.tls.caCertFile }}
             - name: SERVER_TLS_CA_CERT_FILE
               value: {{ .Values.observer.server.tls.caCertFile | quote }}
             {{- end }}
@@ -94,7 +104,7 @@ spec:
             {{- end }}
             {{- end }}
             {{- end }}
-            {{- end }}
+            {{- if .Values.observer.otel }}
             {{- if .Values.observer.otel.serviceName }}
             - name: OTEL_SERVICE_NAME
               value: {{ .Values.observer.otel.serviceName | quote }}
@@ -110,8 +120,7 @@ spec:
               value: {{ .Values.observer.otel.metric.exportInterval | quote }}
             - name: OTEL_METRIC_EXPORT_TIMEOUT
               value: {{ .Values.observer.otel.metric.exportTimeout | quote }}
-            {{- if .Values.observer.otel.traces }}
-            {{- if .Values.observer.otel.traces.enabled }}
+            {{- if and .Values.observer.otel.traces .Values.observer.otel.traces.enabled }}
             - name: OTEL_TRACES_ENABLED
               value: "true"
             - name: OTEL_TRACES_SAMPLER
@@ -119,10 +128,8 @@ spec:
             - name: OTEL_TRACES_SAMPLER_ARG
               value: {{ .Values.observer.otel.traces.samplerArg | quote }}
             {{- end }}
-            {{- end }}
             {{- if .Values.observer.otel.exporter }}
-            {{- if .Values.observer.otel.exporter.otlp }}
-            {{- if .Values.observer.otel.exporter.otlp.enabled }}
+            {{- if and .Values.observer.otel.exporter.otlp .Values.observer.otel.exporter.otlp.enabled }}
             - name: OTEL_EXPORTER_OTLP_ENDPOINT
               value: {{ .Values.observer.otel.exporter.otlp.endpoint | quote }}
             {{- if .Values.observer.otel.exporter.otlp.headers }}
@@ -133,8 +140,7 @@ spec:
               value: {{ .Values.observer.otel.exporter.otlp.protocol | quote }}
             - name: OTEL_EXPORTER_OTLP_TIMEOUT
               value: {{ .Values.observer.otel.exporter.otlp.timeout | quote }}
-            {{- if .Values.observer.otel.exporter.otlp.tls }}
-            {{- if .Values.observer.otel.exporter.otlp.tls.enabled }}
+            {{- if and .Values.observer.otel.exporter.otlp.tls .Values.observer.otel.exporter.otlp.tls.enabled }}
             {{- if .Values.observer.otel.exporter.otlp.tls.caSecretName }}
             - name: OTEL_EXPORTER_OTLP_CERTIFICATE
               value: "/mnt/otlp-tls-ca/ca.crt"
@@ -157,15 +163,13 @@ spec:
             {{- end }}
             {{- end }}
             {{- end }}
-            {{- end }}
-            {{- if .Values.observer.prometheus }}
-            {{- if .Values.observer.prometheus.enabled }}
+            {{- if and .Values.observer.prometheus .Values.observer.prometheus.enabled }}
             - name: PROMETHEUS_ENABLED
               value: "true"
             - name: PROMETHEUS_ENDPOINT
               value: {{ .Values.observer.prometheus.endpoint | quote }}
             {{- end }}
-            {{- end }}
+            {{- if .Values.observer.youless }}
             {{- if .Values.observer.youless.configMapName }}
             - name: YOULESS_BASE_URL
               valueFrom:
@@ -205,17 +209,6 @@ spec:
             - name: YOULESS_PASSWORD
               value: {{ .Values.observer.youless.password | quote }}
             {{- end }}
-            {{- if .Values.observer.mqtt }}
-            {{- if .Values.observer.mqtt.enabled }}
-            - name: MQTT_ENABLED
-              value: "true"
-            - name: MQTT_BROKER_URLS
-              value: {{ .Values.observer.mqtt.brokerUrls | quote }}
-            - name: MQTT_CLIENT_ID
-              value: {{ .Values.observer.mqtt.clientId | quote }}
-            - name: MQTT_TOPIC
-              value: {{ .Values.observer.mqtt.topic | quote }}
-            {{- end }}
             {{- end }}
             - name: OBSERVER_EXCLUDE_POWER
               value: {{ .Values.observer.excludePower | quote }}
@@ -232,9 +225,7 @@ spec:
             {{- toYaml .Values.resources | nindent 12 }}
 
           volumeMounts:
-            {{- if .Values.observer.server }}
-            {{- if .Values.observer.server.tls }}
-            {{- if .Values.observer.server.tls.enabled }}
+            {{- if and .Values.observer.server .Values.observer.server.tls .Values.observer.server.tls.enabled }}
             {{- if .Values.observer.server.tls.secretName }}
             - name: server-tls
               mountPath: /mnt/server-tls
@@ -246,11 +237,8 @@ spec:
               readOnly: true
             {{- end }}
             {{- end }}
-            {{- end }}
-            {{- end }}
-            {{- if .Values.observer.otel.exporter.otlp }}
-            {{- if .Values.observer.otel.exporter.otlp.tls }}
-            {{- if .Values.observer.otel.exporter.otlp.tls.enabled }}
+            {{- if and .Values.observer.otel .Values.observer.otel.exporter .Values.observer.otel.exporter.otlp }}
+            {{- if and .Values.observer.otel.exporter.otlp.tls .Values.observer.otel.exporter.otlp.tls.enabled }}
             {{- if .Values.observer.otel.exporter.otlp.tls.secretName }}
             - name: otlp-client-tls
               mountPath: /mnt/otlp-client-tls
@@ -263,17 +251,14 @@ spec:
             {{- end }}
             {{- end }}
             {{- end }}
-            {{- end }}
-            {{- if .Values.observer.youless.secretName }}
+            {{- if and  .Values.observer.youless .Values.observer.youless.secretName }}
             - name: youless-password
               mountPath: /mnt/youless-password
               readOnly: true
             {{- end }}
 
       volumes:
-        {{- if .Values.observer.server }}
-        {{- if .Values.observer.server.tls }}
-        {{- if .Values.observer.server.tls.enabled }}
+        {{- if and .Values.observer.server .Values.observer.server.tls .Values.observer.server.tls.enabled }}
         {{- if .Values.observer.server.tls.secretName }}
         - name: server-tls
           secret:
@@ -287,10 +272,8 @@ spec:
             defaultMode: 288 # 0400
         {{- end }}
         {{- end }}
-        {{- end }}
-        {{- end }}
-        {{- if .Values.observer.otel.exporter.otlp.tls }}
-        {{- if .Values.observer.otel.exporter.otlp.tls.enabled }}
+        {{- if and .Values.observer.otel .Values.observer.otel.exporter .Values.observer.otel.exporter.otlp }}
+        {{- if and .Values.observer.otel.exporter.otlp.tls .Values.observer.otel.exporter.otlp.tls.enabled }}
         {{- if .Values.observer.otel.exporter.otlp.tls.secretName }}
         - name: otlp-client-tls
           secret:
@@ -305,7 +288,7 @@ spec:
         {{- end }}
         {{- end }}
         {{- end }}
-        {{- if .Values.observer.youless.secretName }}
+        {{- if and .Values.observer.youless .Values.observer.youless.secretName }}
         - name: youless-password
           secret:
             secretName: {{ .Values.observer.youless.secretName }}
