@@ -60,8 +60,8 @@ github.com/prometheus/procfs v0.15.0 h1:A82kmvXJq2jTu5YUhSGNlYoxh85zLnKgPz4bMZgI
 github.com/prometheus/procfs v0.15.0/go.mod h1:Y0RJ/Y5g5wJpkTisOtqwDSo4HwhGmLB4VQSw2sQJLHk=
 github.com/roeldev/youless-client v0.0.0-20240524184820-8b01ee863668 h1:YfuCQYqxnct6zTj7DgWB/Qq02SfdE5cEJ0LbKnU984M=
 github.com/roeldev/youless-client v0.0.0-20240524184820-8b01ee863668/go.mod h1:H6srdP43J+GJcwrvNeRo07UvnJqQuJpj54lYiuOgpiI=
-github.com/roeldev/youless-logger v0.0.0-20240524191031-bca028aa9469 h1:R93CF3satzTnDKJvDf5Crss4fOfNFV2rk3kjsJxzrBY=
-github.com/roeldev/youless-logger v0.0.0-20240524191031-bca028aa9469/go.mod h1:TwtXiVLOBGQ8V2wFSDIHTP1p40/w8lvb5kp8/SGwdIE=
+github.com/roeldev/youless-logger v0.0.0-20240526112651-f734bbe674ee h1:p0K32HJ4L01yKINndje3K/Ax+hhCJ3MWWnzSJLgKevo=
+github.com/roeldev/youless-logger v0.0.0-20240526112651-f734bbe674ee/go.mod h1:TwtXiVLOBGQ8V2wFSDIHTP1p40/w8lvb5kp8/SGwdIE=
 github.com/rs/xid v1.5.0/go.mod h1:trrq9SKmegXys3aeAKXMUTdJsYXVwGY3RLcfgqegfbg=
 github.com/rs/zerolog v1.33.0 h1:1cU2KZkvPxNyfgEmhHAz/1A9Bz+llsdYzklWFzgp0r8=
 github.com/rs/zerolog v1.33.0/go.mod h1:/7mN4D5sKwJLZQ2b/znpjC3/GQWY/xaDXUM0kKWRHss=
