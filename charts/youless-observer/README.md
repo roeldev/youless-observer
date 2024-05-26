@@ -1,10 +1,10 @@
 `youless-observer` Helm Charts
 ==============================
 
-[![Version: 0.1.0-rc3](https://img.shields.io/badge/Version-0.1.0--rc3-informational?style=flat) ][release-url]
+[![Version: 0.1.0](https://img.shields.io/badge/Version-0.1.0--rc3-informational?style=flat) ][release-url]
 [![Artifact Hub][artifact-hub-img]][artifact-hub-url]
 
-[release-url]: https://github.com/roeldev/youless-observer/releases/tag/v0.1.0-rc3
+[release-url]: https://github.com/roeldev/youless-observer/releases/tag/v0.1.0
 
 [artifact-hub-img]: https://img.shields.io/endpoint?url=https://artifacthub.io/badge/repository/youless-observer
 
@@ -35,7 +35,7 @@ helm repo add youless-observer https://roeldev.github.io/youless-observer
 | networkPolicy.create | bool | `true` |  |
 | observer.debug | bool | `false` | When true, overrides and sets: `log.level: "debug"`, `log.accessLog: true`, `tls.insecureSkipVerify: true`. |
 | observer.image.repository | string | `"roeldev/youless-observer"` | The image repository and name. |
-| observer.image.tag | string | `"0.1.0-rc3"` | Tag of the image to deploy. |
+| observer.image.tag | string | `"0.1.0"` | Tag of the image to deploy. |
 | observer.image.pullPolicy | string | `"IfNotPresent"` | Image pull policy for the container. |
 | observer.log.level | string | `"warn"` | Active log level, must be one of: debug, info, warn, error, fatal, panic, disabled. |
 | observer.log.timestamp | bool | `false` | Add timestamp to log entries when true. |

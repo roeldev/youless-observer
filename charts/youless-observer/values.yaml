@@ -30,7 +30,7 @@ observer:
     # -- The image repository and name.
     repository: roeldev/youless-observer
     # -- Tag of the image to deploy.
-    tag: 0.1.0-rc3
+    tag: 0.1.0
     # -- Image pull policy for the container.
     pullPolicy: IfNotPresent
 

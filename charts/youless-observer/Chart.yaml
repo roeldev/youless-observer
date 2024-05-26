@@ -1,7 +1,7 @@
 apiVersion: v2
 name: youless-observer
-version: 0.1.0-rc3
-appVersion: 0.1.0-rc3
+version: 0.1.0
+appVersion: 0.1.0
 description: Real-time usage observer service for YouLess energy meter
 type: application
 keywords: [youless, energy, monitor, observer, otel, mqtt]

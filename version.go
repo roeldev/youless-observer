@@ -5,7 +5,7 @@
 package youlessobserver
 
 // Version of the package and its app.
-const Version = "0.1.0-rc3"
+const Version = "0.1.0"
 
 // Version must match te versions in charts/youless-observer/Chart.yaml and
 // charts/youless-observer/values.yaml
