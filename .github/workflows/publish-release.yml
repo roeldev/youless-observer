@@ -31,13 +31,10 @@ jobs:
           tags: roeldev/youless-observer:${{ env.VERSION }}
 
       - name: Get latest release info
-        id: get_latest
         run: |
           response=$(curl -s "https://api.github.com/repos/roeldev/youless-observer/releases/latest")
-          echo "response=$response" >> "GITHUB_OUTPUT"
           echo "::notice title=response::$response"
-      - run: |
-          echo "LATEST=${{ fromJSON(steps.get_latest.outputs.response).tag_name }}" >> "$GITHUB_ENV"
+          echo "LATEST=$(echo $response | jq -r '.tag_name')" >> "$GITHUB_ENV"
           echo "::notice title=LATEST::${{ env.LATEST }}"
 
       - name: Tag as latest
