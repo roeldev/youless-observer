@@ -7,7 +7,7 @@ require (
 	github.com/go-pogo/easytls v0.1.0
 	github.com/go-pogo/env v0.4.4
 	github.com/go-pogo/errors v0.10.0
-	github.com/go-pogo/healthcheck v0.0.0-20240524185138-e131345ffcdc
+	github.com/go-pogo/healthcheck v0.1.0
 	github.com/go-pogo/telemetry v0.0.0-20240524190626-60425635f0b7
 	github.com/roeldev/youless-client v0.0.0-20240524184820-8b01ee863668
 	github.com/roeldev/youless-logger v0.0.0-20240526112651-f734bbe674ee
