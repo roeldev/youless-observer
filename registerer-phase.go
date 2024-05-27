@@ -35,10 +35,14 @@ func (reg *PhaseReadingRegisterer) WithClient(client *youlessclient.Client) *Pha
 	return reg
 }
 
+func (reg *PhaseReadingRegisterer) CanRegister() bool {
+	return !reg.ExcludePower
+}
+
 // Register registers metrics gauges to the provided meter and starts observing
 // them by getting phase readings from the client.
 func (reg *PhaseReadingRegisterer) Register(meter metric.Meter) (Registration, error) {
-	if reg.ExcludePower {
+	if !reg.CanRegister() {
 		return nil, nil
 	}
 

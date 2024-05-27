@@ -37,10 +37,14 @@ func (reg *MeterReadingRegisterer) WithClient(client *youlessclient.Client) *Met
 	return reg
 }
 
+func (reg *MeterReadingRegisterer) CanRegister() bool {
+	return !reg.ExcludePower || !reg.ExcludeS0 || !reg.ExcludeGas || !reg.ExcludeWater
+}
+
 // Register registers metrics gauges to the provided meter and starts observing
 // them by getting meter readings from the client.
 func (reg *MeterReadingRegisterer) Register(meter metric.Meter) (Registration, error) {
-	if reg.ExcludePower && reg.ExcludeS0 && reg.ExcludeGas && reg.ExcludeWater {
+	if !reg.CanRegister() {
 		return nil, nil
 	}
 

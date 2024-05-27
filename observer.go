@@ -20,6 +20,7 @@ const (
 )
 
 type Registerer interface {
+	CanRegister() bool
 	Register(meter metric.Meter) (Registration, error)
 }
 
@@ -97,6 +98,10 @@ func (o *Observer) Stop() error {
 
 	var err error
 	for _, r := range o.registerers {
+		if r.registration == nil {
+			continue
+		}
+
 		err = errors.Append(err, r.registration.Unregister())
 	}
 
@@ -104,9 +109,13 @@ func (o *Observer) Stop() error {
 	return err
 }
 
-func (o *Observer) RegisterHealthCheckers(reg healthcheck.Registerer) {
+func (o *Observer) RegisterHealthCheckers(registerer healthcheck.Registerer) {
 	for name, r := range o.registerers {
-		reg.Register(name, r.healthChecker(15*time.Second))
+		if r.registration == nil {
+			continue
+		}
+
+		registerer.Register(name, r.healthChecker(15*time.Second))
 	}
 }
 
