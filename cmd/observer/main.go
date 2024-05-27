@@ -8,7 +8,11 @@ package main
 
 import (
 	"context"
+	"github.com/go-pogo/easytls"
 	"github.com/go-pogo/errors"
+	"github.com/go-pogo/healthcheck"
+	"github.com/go-pogo/healthcheck/healthclient"
+	"github.com/go-pogo/serv"
 	"github.com/roeldev/youless-observer/app/observer"
 	"github.com/rs/zerolog"
 	"io"
@@ -29,6 +33,11 @@ func main() {
 		log = log.With().Timestamp().Logger()
 	}
 
+	if len(os.Args) >= 2 && os.Args[1] == "healthcheck" {
+		runHealthCheck(log, conf.Server.Port, conf.Server.TLS)
+		return
+	}
+
 	// collecting metrics is always enabled
 	conf.Telemetry.Meter.Enabled = true
 
@@ -36,6 +45,10 @@ func main() {
 		fatalErr(log, err, "invalid configuration", 1)
 	}
 
+	runApp(log, conf)
+}
+
+func runApp(log zerolog.Logger, conf observerapp.Config) {
 	app, err := observerapp.New(conf, log)
 	if err != nil {
 		fatalErr(log, err, "unable to create observer app", 2)
@@ -58,6 +71,27 @@ func main() {
 		}
 	}()
 	<-closeCtx.Done()
+}
+
+func runHealthCheck(log zerolog.Logger, port serv.Port, tls easytls.Config) {
+	healthy, err := healthclient.New(
+		healthclient.Config{
+			TargetPort: uint16(port),
+			TargetPath: healthcheck.PathPattern,
+		},
+		healthclient.WithTLSConfig(easytls.DefaultTLSConfig(), tls),
+	)
+	if err != nil {
+		fatalErr(log, err, "unable to create healthcheck client", 3)
+	}
+
+	stat, err := healthy.Request(context.Background())
+	if err != nil {
+		log.Err(err).Msg("healthcheck failed")
+	}
+
+	log.Info().Stringer("status", stat).Msg("health checked")
+	os.Exit(stat.ExitCode())
 }
 
 func fatalErr(log zerolog.Logger, err error, msg string, code int) {
