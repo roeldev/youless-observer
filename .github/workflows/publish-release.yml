@@ -8,12 +8,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Strip v from version tag
-        run: |
-          tag=$GITHUB_REF_NAME
-          echo "VERSION=${tag:1}" >> "$GITHUB_ENV"
-          echo "::notice title=VERSION::${{ env.VERSION }}"
-
       - uses: docker/login-action@v3
         with:
           username: "${{ secrets.DOCKER_USERNAME }}"
@@ -22,23 +16,20 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
-      - name: Build and push Docker image
+      - name: Retrieve metadata
+        id: metadata
+        uses: docker/metadata-action@v5
+        with:
+          images: roeldev/healthcheck-mtls-probe
+          tags: |
+            type=semver,pattern={{version}}
+            type=semver,pattern={{major}}.{{minor}}
+            type=semver,pattern={{major}}
+
+      - name: Build and push Docker image (latest)
         uses: docker/build-push-action@v5
         with:
           platforms: linux/amd64,linux/arm64,linux/arm
           pull: true
           push: true
-          tags: roeldev/youless-observer:${{ env.VERSION }}
-
-      - name: Get latest release info
-        run: |
-          response=$(curl -s "https://api.github.com/repos/roeldev/youless-observer/releases/latest")
-          echo "::notice title=response::$response"
-          echo "LATEST=$(echo $response | jq -r '.tag_name')" >> "$GITHUB_ENV"
-          echo "::notice title=LATEST::${{ env.LATEST }}"
-
-      - name: Tag as latest
-        if: ${{ env.LATEST == github.ref_name }}
-        run: |
-          docker tag roeldev/youless-observer:${{ env.VERSION }} roeldev/youless-observer:latest
-          docker push roeldev/youless-observer:latest
+          tags: ${{ steps.metadata.outputs.tags }}
