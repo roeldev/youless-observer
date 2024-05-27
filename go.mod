@@ -7,10 +7,11 @@ require (
 	github.com/go-pogo/easytls v0.1.0
 	github.com/go-pogo/env v0.4.4
 	github.com/go-pogo/errors v0.10.0
-	github.com/go-pogo/healthcheck v0.0.0-20240524185138-e131345ffcdc
+	github.com/go-pogo/healthcheck v0.1.0
+	github.com/go-pogo/serv v0.3.3
 	github.com/go-pogo/telemetry v0.0.0-20240524190626-60425635f0b7
 	github.com/roeldev/youless-client v0.0.0-20240524184820-8b01ee863668
-	github.com/roeldev/youless-logger v0.0.0-20240526112651-f734bbe674ee
+	github.com/roeldev/youless-logger v0.0.0-20240527062902-1125b2c8255b
 	github.com/rs/zerolog v1.33.0
 	go.opentelemetry.io/otel v1.27.0
 	go.opentelemetry.io/otel/metric v1.27.0
@@ -25,7 +26,6 @@ require (
 	github.com/go-logr/stdr v1.2.2 // indirect
 	github.com/go-logr/zerologr v1.2.3 // indirect
 	github.com/go-pogo/rawconv v0.5.3 // indirect
-	github.com/go-pogo/serv v0.3.3 // indirect
 	github.com/go-pogo/writing v0.2.0 // indirect
 	github.com/goccy/go-json v0.10.3 // indirect
 	github.com/grpc-ecosystem/grpc-gateway/v2 v2.20.0 // indirect
