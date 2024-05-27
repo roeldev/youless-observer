@@ -20,7 +20,7 @@ jobs:
         id: metadata
         uses: docker/metadata-action@v5
         with:
-          images: roeldev/healthcheck-mtls-probe
+          images: roeldev/youless-observer
           tags: |
             type=semver,pattern={{version}}
             type=semver,pattern={{major}}.{{minor}}
