@@ -42,12 +42,16 @@ spec:
               containerPort: {{ .Values.observer.server.port }}
 
           readinessProbe:
-            {{- if and .Values.observer.server.tls.enabled .Values.observer.server.tls.verifyClient }}
+            {{- if .Values.observer.server.tls.enabled }}
+            {{- if .Values.observer.server.tls.verifyClient }}
+            exec:
+              command: [ /main, healthcheck ]
+            {{- else }}
             httpGet:
-              # todo: add mtls health probe
               path: /healthy
               port: http
               scheme: HTTPS
+            {{- end }}
             {{- else }}
             httpGet:
               path: /healthy
@@ -57,12 +61,16 @@ spec:
             timeoutSeconds: {{ .Values.readinessProbe.timeoutSeconds }}
             failureThreshold: {{ .Values.readinessProbe.failureThreshold }}
           livenessProbe:
-            {{- if and .Values.observer.server.tls.enabled .Values.observer.server.tls.verifyClient }}
+            {{- if .Values.observer.server.tls.enabled }}
+            {{- if .Values.observer.server.tls.verifyClient }}
+            exec:
+              command: [ /main, healthcheck ]
+            {{- else }}
             httpGet:
-              # todo: add mtls health probe
               path: /healthy
               port: http
               scheme: HTTPS
+            {{- end }}
             {{- else }}
             httpGet:
               path: /healthy
