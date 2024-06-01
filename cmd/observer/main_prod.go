@@ -11,8 +11,6 @@ import (
 	"github.com/go-pogo/env/envfile"
 	"github.com/go-pogo/errors"
 	observerapp "github.com/roeldev/youless-observer/app/observer"
-	"io"
-	"os"
 )
 
 func init() {
@@ -25,9 +23,5 @@ func init() {
 
 		err = env.NewDecoder(src...).Decode(conf)
 		return
-	}
-
-	loggerOut = func() io.Writer {
-		return os.Stdout
 	}
 }

@@ -7,24 +7,16 @@
 package main
 
 import (
-	"fmt"
 	"github.com/go-pogo/easytls"
 	"github.com/go-pogo/env"
 	"github.com/go-pogo/env/dotenv"
 	observerapp "github.com/roeldev/youless-observer/app/observer"
-	"github.com/rs/zerolog"
-	"io"
 	"os"
 	"path/filepath"
 	"runtime"
-	"time"
 )
 
 func init() {
-	zerolog.ErrorMarshalFunc = func(err error) interface{} {
-		return fmt.Sprintf("%+v", err)
-	}
-
 	unmarshalEnv = func(conf *observerapp.Config) error {
 		_, dir, _, _ := runtime.Caller(1)
 		dir = filepath.Dir(dir)
@@ -49,12 +41,6 @@ func init() {
 		prefixDir(dir, &conf.Server.TLS.CertFile)
 		prefixDir(dir, &conf.Server.TLS.KeyFile)
 		return nil
-	}
-
-	loggerOut = func() io.Writer {
-		out := zerolog.NewConsoleWriter()
-		out.TimeFormat = time.StampMilli
-		return out
 	}
 }
 

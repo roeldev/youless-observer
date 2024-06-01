@@ -9,61 +9,78 @@ import (
 	"github.com/go-pogo/buildinfo"
 	"github.com/go-pogo/errors"
 	"github.com/go-pogo/errors/errgroup"
+	"github.com/go-pogo/healthcheck"
+	"github.com/go-pogo/telemetry"
 	youlessclient "github.com/roeldev/youless-client"
-	"github.com/roeldev/youless-logger"
-	"github.com/roeldev/youless-logger/server"
+	"github.com/roeldev/youless-logger/common/logging"
+	"github.com/roeldev/youless-logger/common/server"
 	"github.com/roeldev/youless-observer"
 	"github.com/rs/zerolog"
 )
 
 const (
-	ErrServerCreateFailure   errors.Msg = "failed to create server"
-	ErrClientCreateFailure   errors.Msg = "failed to create client"
-	ErrObserverCreateFailure errors.Msg = "failed to create observer"
+	ErrCreateHealthCheck errors.Msg = "failed to create health checker"
+	ErrCreateServer      errors.Msg = "failed to create server"
+	ErrCreateClient      errors.Msg = "failed to create client"
+	ErrCreateObserver    errors.Msg = "failed to create observer"
+
+	Name = "observer"
 )
 
-// App is the youless-observer application which runs an Observer that observes
-// the YouLess device using a youless.Client. It also runs a server to expose
-// health status, build info and metrics endpoints.
+// App is the youless-observer application which observes the YouLess device
+// using [youless.Client]. It also runs a server to expose health status and
+// build info endpoints.
 type App struct {
+	health   *healthcheck.Checker
+	telem    *telemetry.Telemetry
 	server   *server.Server
 	client   *youlessclient.Client
 	observer *youlessobserver.Observer
 }
 
-func New(conf Config, log zerolog.Logger) (*App, error) {
+func New(conf Config, log *logging.Logger, bld *buildinfo.BuildInfo) (*App, error) {
 	var app App
 	var err error
 
-	app.server, err = server.New("observer", conf.Server, log,
-		server.WithBuildInfo(buildinfo.New(youlessobserver.Version).
-			WithExtra("client_version", youlessclient.Version).
-			WithExtra("logger_version", youlesslogger.Version),
-		),
-		server.WithTelemetryAndPrometheus(conf.Telemetry, conf.Prometheus),
+	app.health, err = healthcheck.New()
+	if err != nil {
+		return nil, errors.Wrap(err, ErrCreateHealthCheck)
+	}
+
+	if conf.Telemetry.ServiceName == "" {
+		conf.Telemetry.ServiceName = "youless-" + Name
+	}
+	telem, err := newTelemetry(conf.Telemetry, &log.Logger, bld, app.health)
+	if err != nil {
+		return nil, errors.Wrap(err, ErrCreateServer)
+	}
+
+	app.server, err = server.New(Name, conf.Server, log, telem,
+		server.WithBuildInfo(bld),
+		server.WithHealthChecker(app.health),
 	)
 	if err != nil {
-		return nil, errors.Wrap(err, ErrServerCreateFailure)
+		return nil, errors.Wrap(err, ErrCreateServer)
 	}
 
 	app.client, err = youlessclient.NewClient(conf.YouLess,
-		youlessclient.WithLogger(youlessclient.NewLogger(log)),
-		youlessclient.WithTracerProvider(app.server.TracerProvider()),
+		youlessclient.WithLogger(youlessclient.NewLogger(log.Logger)),
+		youlessclient.WithTracerProvider(telem.TracerProvider()),
 	)
 	if err != nil {
-		return nil, errors.Wrap(err, ErrClientCreateFailure)
+		return nil, errors.Wrap(err, ErrCreateClient)
 	}
 
-	app.observer, err = youlessobserver.NewObserver(app.server.MeterProvider(),
-		youlessobserver.WithLogger(&logger{log}),
+	app.observer, err = youlessobserver.NewObserver(telem.MeterProvider(),
+		youlessobserver.WithLogger(&logger{log.Logger}),
 		youlessobserver.WithMeterReading(conf.Observer.MeterReadingRegisterer, app.client),
 		youlessobserver.WithPhaseReading(conf.Observer.PhaseReadingRegisterer, app.client),
 	)
 	if err != nil {
-		return nil, errors.Wrap(err, ErrObserverCreateFailure)
+		return nil, errors.Wrap(err, ErrCreateObserver)
 	}
 
-	app.observer.RegisterHealthCheckers(app.server.HealthChecker())
+	app.observer.RegisterHealthCheckers(app.health)
 	return &app, nil
 }
 
@@ -83,6 +100,13 @@ func (app *App) Shutdown(ctx context.Context) error {
 	})
 	wg.Go(func() error {
 		return app.observer.Stop()
+	})
+	wg.Go(func() error {
+		if err := app.telem.ForceFlush(ctx); err != nil {
+			return err
+		}
+
+		return app.telem.Shutdown(ctx)
 	})
 	return wg.Wait()
 }

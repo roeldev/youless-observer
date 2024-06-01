@@ -7,7 +7,7 @@ package observerapp
 import (
 	"github.com/go-pogo/telemetry"
 	youlessclient "github.com/roeldev/youless-client"
-	"github.com/roeldev/youless-logger/server"
+	"github.com/roeldev/youless-logger/common/server"
 	youlessobserver "github.com/roeldev/youless-observer"
 	"github.com/rs/zerolog"
 )
@@ -21,8 +21,7 @@ type Config struct {
 	WithTimestamp bool          `env:"LOG_TIMESTAMP" default:"true"`
 	Server        server.Config `env:",include"`
 	Telemetry     telemetry.Config
-	Prometheus    server.PrometheusConfig `env:",include"`
-	YouLess       youlessclient.Config    `env:"YOULESS,include"`
+	YouLess       youlessclient.Config `env:"YOULESS,include"`
 	//Mqtt          mqtt.Config             `env:",include"`
 
 	Observer struct {
@@ -33,9 +32,6 @@ type Config struct {
 
 func (c Config) Validate() error {
 	if err := c.Server.Validate(); err != nil {
-		return err
-	}
-	if err := c.Prometheus.Validate(); err != nil {
 		return err
 	}
 	if err := c.YouLess.Validate(); err != nil {
