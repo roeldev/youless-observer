@@ -171,12 +171,6 @@ spec:
             {{- end }}
             {{- end }}
             {{- end }}
-            {{- if and .Values.observer.prometheus .Values.observer.prometheus.enabled }}
-            - name: PROMETHEUS_ENABLED
-              value: "true"
-            - name: PROMETHEUS_ENDPOINT
-              value: {{ .Values.observer.prometheus.endpoint | quote }}
-            {{- end }}
             {{- if .Values.observer.youless }}
             {{- if .Values.observer.youless.configMapName }}
             - name: YOULESS_BASE_URL

@@ -113,11 +113,6 @@ observer:
           caCertFile: "" # OTEL_EXPORTER_OTLP_CERTIFICATE
           insecureSkipVerify: false # OTEL_EXPORTER_OTLP_INSECURE
 
-  # metrics
-  prometheus:
-    enabled: false # PROMETHEUS_ENABLED
-    endpoint: /metrics # PROMETHEUS_ENDPOINT
-
   youless:
     # -- When a configMapName is provided, the config map is used to populate the `YOULESS_BASE_URL`, `YOULESS_NAME`,
     # `YOULESS_TIMEOUT` and `YOULESS_PASSWORD` env variables. The config map must have the `url` and `name` keys.
