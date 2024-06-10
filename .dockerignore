@@ -1,5 +1,5 @@
-.github
-.idea
-.run
+/.github
+/.idea
+/.run
 *.tgz
 go.work

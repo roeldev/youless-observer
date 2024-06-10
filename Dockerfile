@@ -21,7 +21,7 @@ RUN set -eux  \
         -tags=notrace  \
         -ldflags="-s -w"  \
         -o="/root-out/main"  \
-        ./cmd/${APP}/...
+        ./cmd/${APP}/main.go
 
 ###############################################################################
 # create actual image
