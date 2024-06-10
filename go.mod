@@ -10,7 +10,7 @@ require (
 	github.com/go-pogo/errors v0.10.0
 	github.com/go-pogo/healthcheck v0.1.0
 	github.com/go-pogo/serv v0.4.0
-	github.com/go-pogo/telemetry v0.1.0
+	github.com/go-pogo/telemetry v0.1.2
 	github.com/roeldev/youless-client v0.0.0-20240524184820-8b01ee863668
 	github.com/roeldev/youless-logger v0.0.0-20240601124413-95bf2b10169e
 	github.com/rs/zerolog v1.33.0
