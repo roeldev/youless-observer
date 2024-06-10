@@ -9,7 +9,7 @@ package main
 import (
 	"github.com/go-pogo/env/envfile"
 	"github.com/go-pogo/errors"
-	"github.com/roeldev/youless-observer/app/observer"
+	"github.com/roeldev/youless-observer/cmd/observer/observer-app"
 	"path/filepath"
 	"runtime"
 )

@@ -10,7 +10,7 @@ import (
 	"github.com/go-pogo/env"
 	"github.com/go-pogo/env/envfile"
 	"github.com/go-pogo/errors"
-	observerapp "github.com/roeldev/youless-observer/app/observer"
+	"github.com/roeldev/youless-observer/cmd/observer/observer-app"
 )
 
 func init() {

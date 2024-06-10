@@ -20,6 +20,7 @@ import (
 
 const (
 	ErrCreateHealthCheck errors.Msg = "failed to create health checker"
+	ErrSetupTelemetry    errors.Msg = "failed to set up telemetry"
 	ErrCreateServer      errors.Msg = "failed to create server"
 	ErrCreateClient      errors.Msg = "failed to create client"
 	ErrCreateObserver    errors.Msg = "failed to create observer"
@@ -31,8 +32,8 @@ const (
 // using [youless.Client]. It also runs a server to expose health status and
 // build info endpoints.
 type App struct {
-	health   *healthcheck.Checker
 	telem    *telemetry.Telemetry
+	health   *healthcheck.Checker
 	server   *server.Server
 	client   *youlessclient.Client
 	observer *youlessobserver.Observer
@@ -50,9 +51,9 @@ func New(conf Config, log *logging.Logger, bld *buildinfo.BuildInfo) (*App, erro
 	if conf.Telemetry.ServiceName == "" {
 		conf.Telemetry.ServiceName = "youless-" + Name
 	}
-	telem, err := newTelemetry(conf.Telemetry, &log.Logger, bld, app.health)
+	telem, err := setupTelemetry(conf.Telemetry, &log.Logger, bld, app.health)
 	if err != nil {
-		return nil, errors.Wrap(err, ErrCreateServer)
+		return nil, errors.Wrap(err, ErrSetupTelemetry)
 	}
 
 	app.server, err = server.New(Name, conf.Server, log, telem,

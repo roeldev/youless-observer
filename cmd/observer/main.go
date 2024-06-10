@@ -16,7 +16,7 @@ import (
 	"github.com/go-pogo/serv"
 	"github.com/roeldev/youless-logger/common/logging"
 	youlessobserver "github.com/roeldev/youless-observer"
-	"github.com/roeldev/youless-observer/app/observer"
+	"github.com/roeldev/youless-observer/cmd/observer/observer-app"
 	"os"
 	"os/signal"
 	"syscall"
@@ -38,8 +38,7 @@ func main() {
 	// collecting metrics is always enabled
 	conf.Telemetry.Meter.Enabled = true
 	if err := conf.Validate(); err != nil {
-		log.Err(err).Msg("invalid configuration")
-		os.Exit(errors.GetExitCodeOr(err, 1))
+		log.Fatal().Err(err).Msg("invalid configuration")
 	}
 
 	runApp(log, conf)
@@ -58,8 +57,7 @@ func runApp(log *logging.Logger, conf observerapp.Config) {
 
 	app, err := observerapp.New(conf, log, bld)
 	if err != nil {
-		log.Err(err).Msg("unable to create observer app")
-		os.Exit(errors.GetExitCodeOr(err, 2))
+		log.Fatal().Err(err).Msg("unable to create observer app")
 	}
 
 	runCtx, stopFn := signal.NotifyContext(context.Background(), syscall.SIGINT, syscall.SIGTERM)
@@ -90,15 +88,15 @@ func runHealthCheck(log *logging.Logger, port serv.Port, tls easytls.Config) {
 		healthclient.WithTLSConfig(easytls.DefaultTLSConfig(), tls),
 	)
 	if err != nil {
-		log.Err(err).Msg("unable to create healthcheck client")
-		os.Exit(errors.GetExitCodeOr(err, 3))
+		log.Fatal().Err(err).Msg("unable to create healthcheck client")
 	}
 
 	stat, err := healthy.Request(context.Background())
 	if err != nil {
-		log.Err(err).Msg("healthcheck failed")
+		log.Err(err).Stringer("status", stat).Msg("healthcheck failed")
+	} else {
+		log.Info().Stringer("status", stat).Msg("health checked")
 	}
 
-	log.Info().Stringer("status", stat).Msg("health checked")
 	os.Exit(stat.ExitCode())
 }

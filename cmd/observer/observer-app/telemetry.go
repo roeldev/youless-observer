@@ -16,7 +16,7 @@ import (
 	"time"
 )
 
-func newTelemetry(conf telemetry.Config, log *zerolog.Logger, bld *buildinfo.BuildInfo, reg healthcheck.Registerer) (*telemetry.Telemetry, error) {
+func setupTelemetry(conf telemetry.Config, log *zerolog.Logger, bld *buildinfo.BuildInfo, reg healthcheck.Registerer) (*telemetry.Telemetry, error) {
 	telem := telemetry.NewBuilder(conf).Global().WithDefaultExporter()
 	if bld != nil {
 		telem.TracerProvider.WithBuildInfo(bld.Internal())

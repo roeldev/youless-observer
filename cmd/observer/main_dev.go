@@ -10,7 +10,6 @@ import (
 	"github.com/go-pogo/easytls"
 	"github.com/go-pogo/env"
 	"github.com/go-pogo/env/dotenv"
-	observerapp "github.com/roeldev/youless-observer/app/observer"
 	"os"
 	"path/filepath"
 	"runtime"
