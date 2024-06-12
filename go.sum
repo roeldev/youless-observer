@@ -22,8 +22,8 @@ github.com/go-pogo/easytls v0.1.0 h1:rxjiZHY3We4yZLQKRUht/ZMnflPnv9yhzxCYHhfMqG4
 github.com/go-pogo/easytls v0.1.0/go.mod h1:it/Qhc+BJ7iX9m4aAHpG9o+VNq0uqnyBVv2/rd7nesM=
 github.com/go-pogo/env v0.4.4 h1:W2oy8RAfYGV7yjn1FG7+cSjzF+92Ad2/3SySkWhWPpY=
 github.com/go-pogo/env v0.4.4/go.mod h1:aOy+mleXtJMrsXv3F7xmEUAizwezVPtWWKO+oOAZy2I=
-github.com/go-pogo/errors v0.10.0 h1:hMgJ/s90sJH6XPH9tE0jvhGu9aSHnO2r8w4idOj4950=
-github.com/go-pogo/errors v0.10.0/go.mod h1:siGu70A3ZN66hrvkQuK+t3O5eB7kquLnaw52L2IBtYg=
+github.com/go-pogo/errors v0.11.0 h1:C8MV298ihwm4wTIZRSiv0qmB2f8LOCx/+rWBX+V9spA=
+github.com/go-pogo/errors v0.11.0/go.mod h1:siGu70A3ZN66hrvkQuK+t3O5eB7kquLnaw52L2IBtYg=
 github.com/go-pogo/healthcheck v0.1.0 h1:oA/fqo/lNw2zKHvDfHKt4MgtEomyIQsvcmDOwhKl4c0=
 github.com/go-pogo/healthcheck v0.1.0/go.mod h1:BsokIP6ZLiSm3iw8wJKPhztBOCRinKlhXLvtENbzzfw=
 github.com/go-pogo/rawconv v0.5.3 h1:2Dp3TIyy2OV+2cFZiIhu3W5sMKA/1ewbg6o0XIPaX00=
