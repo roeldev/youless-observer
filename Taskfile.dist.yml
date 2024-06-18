@@ -2,6 +2,14 @@
 version: '3'
 
 tasks:
+  gen:
+    desc: Generate code
+    cmds:
+      - buf build
+      - buf generate
+      - go generate ./...
+      - task: chart:readme
+
   ci:lint:
     desc: Run linter via act
     cmds:
