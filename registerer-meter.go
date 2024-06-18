@@ -6,12 +6,13 @@ package youlessobserver
 
 import (
 	"context"
+	"sync/atomic"
+	"time"
+
 	"github.com/go-pogo/errors"
 	youlessclient "github.com/roeldev/youless-client"
 	"go.opentelemetry.io/otel/attribute"
 	"go.opentelemetry.io/otel/metric"
-	"sync/atomic"
-	"time"
 )
 
 const MeterReadingObserverName = "youless.observer.meter"

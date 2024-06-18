@@ -7,12 +7,14 @@
 package main
 
 import (
-	"github.com/go-pogo/easytls"
-	"github.com/go-pogo/env"
-	"github.com/go-pogo/env/dotenv"
 	"os"
 	"path/filepath"
 	"runtime"
+
+	"github.com/go-pogo/easytls"
+	"github.com/go-pogo/env"
+	"github.com/go-pogo/env/dotenv"
+	"github.com/roeldev/youless-observer/cmd/observer/observer-app"
 )
 
 func init() {

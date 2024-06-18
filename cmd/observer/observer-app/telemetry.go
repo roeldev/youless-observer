@@ -6,14 +6,15 @@ package observerapp
 
 import (
 	"context"
+	"sync"
+	"time"
+
 	"github.com/go-logr/zerologr"
 	"github.com/go-pogo/buildinfo"
 	"github.com/go-pogo/healthcheck"
 	"github.com/go-pogo/telemetry"
 	"github.com/rs/zerolog"
 	"go.opentelemetry.io/otel"
-	"sync"
-	"time"
 )
 
 func setupTelemetry(conf telemetry.Config, log *zerolog.Logger, bld *buildinfo.BuildInfo, reg healthcheck.Registerer) (*telemetry.Telemetry, error) {

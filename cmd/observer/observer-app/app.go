@@ -6,6 +6,7 @@ package observerapp
 
 import (
 	"context"
+
 	"github.com/go-pogo/buildinfo"
 	"github.com/go-pogo/errors"
 	"github.com/go-pogo/errors/errgroup"

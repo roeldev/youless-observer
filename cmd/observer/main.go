@@ -8,6 +8,10 @@ package main
 
 import (
 	"context"
+	"os"
+	"os/signal"
+	"syscall"
+
 	"github.com/go-pogo/buildinfo"
 	"github.com/go-pogo/easytls"
 	"github.com/go-pogo/errors"
@@ -17,9 +21,6 @@ import (
 	"github.com/roeldev/youless-logger/common/logging"
 	youlessobserver "github.com/roeldev/youless-observer"
 	"github.com/roeldev/youless-observer/cmd/observer/observer-app"
-	"os"
-	"os/signal"
-	"syscall"
 )
 
 var unmarshalEnv func(conf *observerapp.Config) error

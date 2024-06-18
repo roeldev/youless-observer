@@ -6,12 +6,12 @@ package youlessobserver
 
 import (
 	"context"
-	"github.com/go-pogo/errors"
-	"github.com/go-pogo/healthcheck"
-	youlessclient "github.com/roeldev/youless-client"
-	"go.opentelemetry.io/otel/metric"
 	"sync/atomic"
 	"time"
+
+	"github.com/go-pogo/errors"
+	"github.com/go-pogo/healthcheck"
+	"go.opentelemetry.io/otel/metric"
 )
 
 const (
