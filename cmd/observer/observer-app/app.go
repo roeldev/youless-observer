@@ -66,7 +66,7 @@ func New(conf Config, log *logging.Logger, bld *buildinfo.BuildInfo) (*App, erro
 	}
 
 	app.client, err = youlessclient.NewClient(conf.YouLess,
-		youlessclient.WithLogger(youlessclient.NewLogger(log.Logger)),
+		youlessclient.WithLogger(log),
 		youlessclient.WithTracerProvider(telem.TracerProvider()),
 	)
 	if err != nil {
@@ -74,7 +74,7 @@ func New(conf Config, log *logging.Logger, bld *buildinfo.BuildInfo) (*App, erro
 	}
 
 	app.observer, err = youlessobserver.NewObserver(telem.MeterProvider(),
-		youlessobserver.WithLogger(&logger{log.Logger}),
+		youlessobserver.WithLogger(&observerLogger{log.Logger}),
 		youlessobserver.WithMeterReading(conf.Observer.MeterReadingRegisterer, app.client),
 		youlessobserver.WithPhaseReading(conf.Observer.PhaseReadingRegisterer, app.client),
 	)
@@ -96,10 +96,10 @@ func (app *App) Run(ctx context.Context) error {
 
 // Shutdown the app by stopping the internal observer and server.
 func (app *App) Shutdown(ctx context.Context) error {
+	// shutdown server first before shutting down other services
+	serverErr := app.server.Shutdown(ctx)
+
 	wg, ctx := errgroup.WithContext(ctx)
-	wg.Go(func() error {
-		return app.server.Shutdown(ctx)
-	})
 	wg.Go(func() error {
 		return app.observer.Stop()
 	})
@@ -110,19 +110,20 @@ func (app *App) Shutdown(ctx context.Context) error {
 
 		return app.telem.Shutdown(ctx)
 	})
-	return wg.Wait()
+
+	return errors.Append(serverErr, wg.Wait())
 }
 
-var _ youlessobserver.Logger = (*logger)(nil)
+var _ youlessobserver.Logger = (*observerLogger)(nil)
 
-type logger struct{ zl zerolog.Logger }
+type observerLogger struct{ zl zerolog.Logger }
 
-func (l *logger) Register(name string) {
+func (l *observerLogger) LogRegister(name string) {
 	l.zl.Debug().
 		Str("name", name).
 		Msg("observer register")
 }
 
-func (l *logger) ObserverStart() { l.zl.Info().Msg("observer starting") }
+func (l *observerLogger) LogObserverStart() { l.zl.Info().Msg("observer starting") }
 
-func (l *logger) ObserverStop() { l.zl.Info().Msg("observer stopped") }
+func (l *observerLogger) LogObserverStop() { l.zl.Info().Msg("observer stopped") }

@@ -20,19 +20,19 @@ const PhaseReadingObserverName = "youless.observer.phase"
 var _ Registerer = (*PhaseReadingRegisterer)(nil)
 
 type PhaseReadingRegisterer struct {
-	client *youlessclient.Client
+	api youlessclient.API
 
 	ExcludePower bool
 	SinglePhase  bool
 }
 
-func NewPhaseReadingRegisterer(client *youlessclient.Client) *PhaseReadingRegisterer {
+func NewPhaseReadingRegisterer(yl youlessclient.API) *PhaseReadingRegisterer {
 	var reg PhaseReadingRegisterer
-	return reg.WithClient(client)
+	return reg.WithAPIClient(yl)
 }
 
-func (reg *PhaseReadingRegisterer) WithClient(client *youlessclient.Client) *PhaseReadingRegisterer {
-	reg.client = client
+func (reg *PhaseReadingRegisterer) WithAPIClient(yl youlessclient.API) *PhaseReadingRegisterer {
+	reg.api = yl
 	return reg
 }
 
@@ -144,7 +144,7 @@ func (reg *phaseReadingRegistration) LastCheck() time.Time {
 }
 
 func (reg *phaseReadingRegistration) callback(ctx context.Context, observer metric.Observer) error {
-	d, err := reg.conf.client.GetPhaseReading(ctx)
+	d, err := reg.conf.api.GetPhaseReading(ctx)
 	if err != nil {
 		// todo: send err to channel
 		return err

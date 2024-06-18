@@ -73,17 +73,17 @@ func (o *Observer) Start() error {
 		return errors.New(ErrAlreadyStarted)
 	}
 
-	o.log.ObserverStart()
+	o.log.LogObserverStart()
 	o.started.Store(true)
-	opts := metric.WithInstrumentationVersion(youlessclient.Version)
+	//opts := metric.WithInstrumentationVersion(youlessclient.Version)
 
 	for name, r := range o.registerers {
-		reg, err := r.Register(o.prov.Meter(name, opts))
+		reg, err := r.Register(o.prov.Meter(name))
 		if err != nil {
 			return err
 		}
 		if reg != nil {
-			o.log.Register(name)
+			o.log.LogRegister(name)
 			r.registration = reg
 		}
 	}
@@ -105,7 +105,7 @@ func (o *Observer) Stop() error {
 		err = errors.Append(err, r.registration.Unregister())
 	}
 
-	o.log.ObserverStop()
+	o.log.LogObserverStop()
 	return err
 }
 

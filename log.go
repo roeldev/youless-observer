@@ -5,17 +5,17 @@
 package youlessobserver
 
 type Logger interface {
-	Register(name string)
-	ObserverStart()
-	ObserverStop()
+	LogRegister(name string)
+	LogObserverStart()
+	LogObserverStop()
 }
 
 func NopLogger() Logger { return new(nopLogger) }
 
 type nopLogger struct{}
 
-func (nopLogger) Register(_ string) {}
+func (nopLogger) LogRegister(_ string) {}
 
-func (nopLogger) ObserverStart() {}
+func (nopLogger) LogObserverStart() {}
 
-func (nopLogger) ObserverStop() {}
+func (nopLogger) LogObserverStop() {}

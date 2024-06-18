@@ -13,7 +13,7 @@ import (
 )
 
 //goland:noinspection GoUnusedConst
-const ConfigValidationError = youlessclient.ConfigValidationError
+const ErrInvalidConfig = youlessclient.ErrInvalidConfig
 
 // Config is the configuration for App.
 type Config struct {

@@ -26,19 +26,19 @@ func WithRegisterer(name string, reg Registerer) Option {
 	}
 }
 
-func WithMeterReading(reg MeterReadingRegisterer, client *youlessclient.Client) Option {
+func WithMeterReading(reg MeterReadingRegisterer, api youlessclient.API) Option {
 	return func(o *Observer) error {
-		if client != nil {
-			reg.WithClient(client)
+		if api != nil {
+			reg.WithAPIClient(api)
 		}
 		return WithRegisterer(MeterReadingObserverName, &reg)(o)
 	}
 }
 
-func WithPhaseReading(reg PhaseReadingRegisterer, client *youlessclient.Client) Option {
+func WithPhaseReading(reg PhaseReadingRegisterer, api youlessclient.API) Option {
 	return func(o *Observer) error {
-		if client != nil {
-			reg.WithClient(client)
+		if api != nil {
+			reg.WithAPIClient(api)
 		}
 		return WithRegisterer(PhaseReadingObserverName, &reg)(o)
 	}

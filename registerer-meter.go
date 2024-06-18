@@ -20,7 +20,7 @@ const MeterReadingObserverName = "youless.observer.meter"
 var _ Registerer = (*MeterReadingRegisterer)(nil)
 
 type MeterReadingRegisterer struct {
-	client *youlessclient.Client
+	api youlessclient.API
 
 	ExcludePower bool
 	ExcludeS0    bool
@@ -28,13 +28,13 @@ type MeterReadingRegisterer struct {
 	ExcludeWater bool
 }
 
-func NewMeterReadingRegisterer(client *youlessclient.Client) *MeterReadingRegisterer {
+func NewMeterReadingRegisterer(yl youlessclient.API) *MeterReadingRegisterer {
 	var reg MeterReadingRegisterer
-	return reg.WithClient(client)
+	return reg.WithAPIClient(yl)
 }
 
-func (reg *MeterReadingRegisterer) WithClient(client *youlessclient.Client) *MeterReadingRegisterer {
-	reg.client = client
+func (reg *MeterReadingRegisterer) WithAPIClient(yl youlessclient.API) *MeterReadingRegisterer {
+	reg.api = yl
 	return reg
 }
 
@@ -153,14 +153,14 @@ func (reg *meterReadingRegistration) LastCheck() time.Time {
 }
 
 func (reg *meterReadingRegistration) callback(ctx context.Context, observer metric.Observer) error {
-	d, err := reg.conf.client.GetMeterReading(ctx)
+	d, err := reg.conf.api.GetMeterReading(ctx)
 	if err != nil {
 		// todo: send err to channel
 		return err
 	}
 
 	if !reg.conf.ExcludePower && d.Timestamp != 0 {
-		attr := attribute.NewSet(attribute.Int64("time_unix_nano", d.Time().UnixNano()))
+		attr := attribute.NewSet(attribute.Int64("time_unix_nano", d.ElectricityReading.Time().UnixNano()))
 		observer.ObserveFloat64(reg.electricityImport1, d.ElectricityImport1, metric.WithAttributeSet(attr))
 		observer.ObserveFloat64(reg.electricityImport2, d.ElectricityImport2, metric.WithAttributeSet(attr))
 		observer.ObserveFloat64(reg.electricityExport1, d.ElectricityExport1, metric.WithAttributeSet(attr))
@@ -169,17 +169,17 @@ func (reg *meterReadingRegistration) callback(ctx context.Context, observer metr
 		observer.ObserveInt64(reg.power, d.Power, metric.WithAttributeSet(attr))
 	}
 	if !reg.conf.ExcludeS0 && d.S0Timestamp != 0 {
-		attr := attribute.NewSet(attribute.Stringer("timestamp", d.S0Time()))
+		attr := attribute.NewSet(attribute.Stringer("timestamp", d.S0Reading.Time()))
 		observer.ObserveFloat64(reg.s0Total, d.S0Total, metric.WithAttributeSet(attr))
 		observer.ObserveInt64(reg.s0, d.S0, metric.WithAttributeSet(attr))
 	}
 	if !reg.conf.ExcludeGas && d.GasTimestamp != 0 {
-		attr := attribute.NewSet(attribute.Stringer("timestamp", d.GasTime()))
-		observer.ObserveFloat64(reg.gas, d.Gas, metric.WithAttributeSet(attr))
+		attr := attribute.NewSet(attribute.Stringer("timestamp", d.GasReading.Time()))
+		observer.ObserveFloat64(reg.gas, d.GasTotal, metric.WithAttributeSet(attr))
 	}
 	if !reg.conf.ExcludeWater && d.WaterTimestamp != 0 {
-		attr := attribute.NewSet(attribute.Stringer("timestamp", d.WaterTime()))
-		observer.ObserveFloat64(reg.water, d.Water, metric.WithAttributeSet(attr))
+		attr := attribute.NewSet(attribute.Stringer("timestamp", d.WaterReading.Time()))
+		observer.ObserveFloat64(reg.water, d.WaterTotal, metric.WithAttributeSet(attr))
 	}
 
 	reg.last.Store(time.Now())
