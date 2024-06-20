@@ -5,9 +5,9 @@ go 1.22.0
 require (
 	github.com/go-logr/zerologr v1.2.3
 	github.com/go-pogo/buildinfo v0.7.1
-	github.com/go-pogo/easytls v0.1.1
+	github.com/go-pogo/easytls v0.1.2
 	github.com/go-pogo/env v0.4.5
-	github.com/go-pogo/errors v0.11.0
+	github.com/go-pogo/errors v0.11.1
 	github.com/go-pogo/healthcheck v0.1.1
 	github.com/go-pogo/serv v0.5.0
 	github.com/go-pogo/telemetry v0.1.4
